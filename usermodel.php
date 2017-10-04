@@ -1,3 +1,4 @@
+
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 
     <form method="POST" action="<?=admin_path()?>users/edit" accept-charset="UTF-8" class="ajax closeModalAfter" id="userprofile">
@@ -15,13 +16,13 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="first_name" class="control-label required">First Name</label>
-                                <input class="form-control validate[required]" name="first_name" value="<?=$this->user_session['U_FNAME'] ?>" id="first_name" type="text">
+                                <input class="form-control validate[required]" name="first_name" value="<?php echo $userDetails['U_FNAME']; ?>" id="first_name" type="text">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="last_name" class="control-label required">Last Name</label>
-                                <input class="form-control validate[required]" name="last_name" value="<?=$this->user_session['U_LNAME'] ?>" id="last_name" type="text">
+                                <input class="form-control validate[required]" name="last_name" value="<?php echo $userDetails['U_LNAME']; ?>" id="last_name" type="text">
                             </div>
                         </div>
                     </div>
@@ -29,7 +30,7 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="email" class="control-label required">Email</label>
-                                <input class="form-control validate[required,custom[email]]" name="email" value="<?=$this->user_session['U_EMAIL'] ?>" id="email" type="text">
+                                <input class="form-control validate[required,custom[email]]" name="email" value="<?php echo $userDetails['U_EMAIL']; ?>" id="email" type="text">
                             </div>
                         </div>
                     </div>

@@ -28,7 +28,11 @@
 				<?php $this->load->view('admin/template/footer');?>
 			</footer>
 			<?php }?>
-			<?php  $this->load->view('admin/usermodel');?>
+
+			<?php
+            $userDetails=$this->common_model->getUserDetails($this->user_session['U_ID']);
+            $data['userDetails'] = $userDetails;
+            $this->load->view('admin/usermodel', $data);?>
 						
 	</body>
 		<?php $this->load->view('admin/template/script');?>

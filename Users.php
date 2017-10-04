@@ -6,6 +6,9 @@ class Users extends CI_Controller {
 		
 		parent::__construct();
 		$this->user_session = $this->session->userdata('user_session');
+        date_default_timezone_set('Asia/Kolkata');
+		$this->load->helper(array('form'));
+		$this->load->library('form_validation');
 	}
 	public function index()
 	{
@@ -13,7 +16,7 @@ class Users extends CI_Controller {
 		$updatedRecord=$this->input->get('update', TRUE);	
 		if($updatedRecord != '')
 		{
-			$data['updatedRecord'] = $updatedRecord;	
+			$data['updatedRecord'] = $updatedRecord;
 		}
 		$data['view'] = "index";
 		$this->load->view('admin/content', $data);
@@ -47,20 +50,60 @@ class Users extends CI_Controller {
 	
 	public function edit($id = NULL)
 	{
-		
+		    $flash_arr=array();
+            $error = array();
 			$post=$this->input->post();
 			//echo "<pre>";print_r($post);exit;
-			$inputArr=array('U_FNAME'=>$post['first_name'],'U_LNAME'=>$post['last_name'],'U_EMAIL'=>$post['email'],);
-			$where=array('U_ID'=>$post['user_id']);
-			$updateId=$this->common_model->updateData($this->common_model->cs_db,"users",$inputArr,$where);	
-			if($updateId > 0)
+            $inputArr=array();
+			$inputArr=array('U_FNAME'=>$post['first_name'],'U_LNAME'=>$post['last_name'],'U_EMAIL'=>$post['email']);
+            $this->form_validation->set_rules('first_name', 'First Name', 'required');
+			$this->form_validation->set_rules('last_name', 'Last Name', 'required');
+			$this->form_validation->set_rules('U_EMAIL', 'Email', 'required|valid_email');
+			$this->form_validation->set_rules('password', 'Password', 'required');
+			$this->form_validation->set_rules('id="new_password_confirmation"', 'Confirm Password', 'required|matches[new_password]');
+
+            if($this->form_validation->run() == FALSE)
 			{
-				$data['update'] = 1;
-			}else{
-				$data['update'] = 0;
-			}
-			//redirect(admin_path().'category?update='.$data['update']);
-		
+				//$data["view"] = "registration";
+				//$this->load->view("content", $data);
+			}   else{
+                        if(isset($post['password']) &&  $post['password']!=''){
+                            $where = array('U_PASSWD' => md5($this->input->post('password')));
+    			        	$user = $this->common_model->selectData($this->common_model->cs_db,"users", '*', $where);
+    				        if (count($user) > 0) {
+    				            if(isset($post['new_password']) &&  $post['new_password']!=''){
+                                $newPass=$post['new_password'];
+                                $Pssdata = array('U_PASSWD' => md5($this->input->post('new_password')));
+                                    $inputArr= array_merge($inputArr,$Pssdata) ;
+                                }
+                                }
+                        } else{
+                         $error['pasword'] = "Invalid Password.";
+                        }
+                			$where=array('U_ID'=>$post['user_id']);
+                			$updateId=$this->common_model->updateData($this->common_model->cs_db,"users",$inputArr,$where);
+                			if($updateId > 0)
+                			{
+                				$data['update'] = 1;
+                			}else{
+                				$data['update'] = 0;
+                			}
+                            if ($data['update']==1) {
+        						$flash_arr = array('flash_type' => 'success',
+        										'flash_msg' => 'Profile Details has been successfully update.'
+        									);
+        					}else{
+        						$flash_arr = array('flash_type' => 'error',
+        										'flash_msg' => 'An error occurred while processing.'
+        									);
+        					}
+        					$data['flash_msg'] = $flash_arr;
+                           redirect(admin_path().'category?update='.$data['update']);
+
+                            //$data['error_msg'] = $error;
+
+                         }
+
 	}
 
 	/*public function delcategory()

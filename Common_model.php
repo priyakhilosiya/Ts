@@ -59,15 +59,17 @@ class common_model extends CI_Model{
 		$fromtable="users";
 		$fields='*';
 		$orderby='U_ID';
-		$orderType='DESC';
 
 		$this->db->select('*');
 		$this->db->from($fromtable);
 		$this->db->where('U_ID',$id);
-		$this->db->order_by($orderby,$orderType);
-		$query = $this->db->get();
+	    $query = $this->db->get();
 		$data = $query->result_array();
-		
+        if(count($data) > 0)
+			{
+					$data=$data[0];
+			}
+       	return $data;
 	}
 
 	public function getFaqs($limit,$start)
@@ -137,7 +139,7 @@ class common_model extends CI_Model{
 			$commentsinfo=$this->selectDataArr($this->db,'faq_comments','*',$where,$orderbyComments,$orderTypeComments);
 			if(count($commentsinfo) > 0)
 			{
-					$data[0]['comments']=$commentsinfo;	
+					$data[0]['comments']=$commentsinfo;
 			}
 			//get Question Comments
 		}
