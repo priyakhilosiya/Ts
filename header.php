@@ -4,7 +4,7 @@
             <img style="width: 150px;" class="logo" alt="Attendize" src="<?=public_path()?>images/logo-light.png">
         </a>
     </div>
-	<div class="navbar-toolbar clearfix">
+    <div class="navbar-toolbar clearfix">
             <ul class="nav navbar-nav navbar-left">
     <!-- Show Side Menu -->
     <li class="navbar-main">
@@ -22,27 +22,28 @@
             </span>
         </a>
     </li>
-			</ul>
-	<ul class="nav navbar-nav navbar-right">
-		<li class="dropdown profile">
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown profile">
 
-			<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
-				<span class="meta">
-					<span class="text "><?=$this->user_session['U_FNAME']." ".$this->user_session['U_LNAME'] ?></span>
-					<span class="arrow"></span>
-				</span>
-			</a>
+            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
+                <span class="meta">
+                    <span class="text "><?=$this->user_session['U_FNAME']." ".$this->user_session['U_LNAME'] ?></span>
+                    <span class="arrow"></span>
+                </span>
+            </a>
 
 
-			<ul class="dropdown-menu" role="menu">
-				
-				<li>
-					<a data-href="<?=admin_path()?>" data-toggle="modal" data-target="#exampleModal" class="loadModal editUserModal" href="javascript:void(0);"><span class="icon ico-user"></span>My Profile</a>
-				</li>
-				<li class="divider"></li>
-				<li><a href="<?=admin_path()."index/logout"?>"><span class="icon ico-exit"></span>Sign Out</a></li>
-			</ul>
-		</li>
-	</ul>
-	</div>
+            <ul class="dropdown-menu" role="menu">
+
+                <li>
+                    <a data-toggle="modal" data-target="#exampleModal" class="" href="javascript:void(0);"><span class="icon ico-user"></span>My Profile</a>
+                </li>
+                <li class="divider"></li>
+                <li><a href="<?=admin_path()."index/logout"?>"><span class="icon ico-exit"></span>Sign Out</a></li>
+            </ul>
+        </li>
+    </ul>
+    </div>
+
 <!-- End of header-->

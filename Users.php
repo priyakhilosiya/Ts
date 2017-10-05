@@ -12,7 +12,7 @@ class Users extends CI_Controller {
 	}
 	public function index()
 	{
-		
+	
 		$updatedRecord=$this->input->get('update', TRUE);	
 		if($updatedRecord != '')
 		{
@@ -49,69 +49,99 @@ class Users extends CI_Controller {
 
 	
 	public function edit($id = NULL)
-	{
-		    $flash_arr=array();
-            $error = array();
+	{		$this->load->helper(array('form'));
+			$this->load->library('form_validation');
 			$post=$this->input->post();
-			//echo "<pre>";print_r($post);exit;
-            $inputArr=array();
-			$inputArr=array('U_FNAME'=>$post['first_name'],'U_LNAME'=>$post['last_name'],'U_EMAIL'=>$post['email']);
-            $this->form_validation->set_rules('first_name', 'First Name', 'required');
+			$this->form_validation->set_rules('first_name', 'First Name', 'required');
 			$this->form_validation->set_rules('last_name', 'Last Name', 'required');
-			$this->form_validation->set_rules('U_EMAIL', 'Email', 'required|valid_email');
-			$this->form_validation->set_rules('password', 'Password', 'required');
-			$this->form_validation->set_rules('id="new_password_confirmation"', 'Confirm Password', 'required|matches[new_password]');
-
-            if($this->form_validation->run() == FALSE)
+			$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+			if($this->input->post('password')){
+				$this->form_validation->set_rules('password', 'Password', 'trim|oldpassword_check');
+			}
+			if($this->input->post('new_password_confirmation')){
+				$this->form_validation->set_rules('new_password_confirmation', 'Confirm Password', 'matches[new_password]');
+			}
+			$errors=$this->form_validation->error_array();
+				
+			 if($this->form_validation->run() == FALSE)
 			{
-				//$data["view"] = "registration";
-				//$this->load->view("content", $data);
-			}   else{
-                        if(isset($post['password']) &&  $post['password']!=''){
-                            $where = array('U_PASSWD' => md5($this->input->post('password')));
-    			        	$user = $this->common_model->selectData($this->common_model->cs_db,"users", '*', $where);
-    				        if (count($user) > 0) {
-    				            if(isset($post['new_password']) &&  $post['new_password']!=''){
-                                $newPass=$post['new_password'];
-                                $Pssdata = array('U_PASSWD' => md5($this->input->post('new_password')));
-                                    $inputArr= array_merge($inputArr,$Pssdata) ;
-                                }
-                                }
-                        } else{
-                         $error['pasword'] = "Invalid Password.";
-                        }
-                			$where=array('U_ID'=>$post['user_id']);
-                			$updateId=$this->common_model->updateData($this->common_model->cs_db,"users",$inputArr,$where);
-                			if($updateId > 0)
-                			{
-                				$data['update'] = 1;
-                			}else{
-                				$data['update'] = 0;
-                			}
-                            if ($data['update']==1) {
-        						$flash_arr = array('flash_type' => 'success',
-        										'flash_msg' => 'Profile Details has been successfully update.'
-        									);
-        					}else{
-        						$flash_arr = array('flash_type' => 'error',
-        										'flash_msg' => 'An error occurred while processing.'
-        									);
-        					}
-        					$data['flash_msg'] = $flash_arr;
-                           redirect(admin_path().'category?update='.$data['update']);
-
-                            //$data['error_msg'] = $error;
-
-                         }
-
+				 echo json_encode( array('status' => 'error','messages' => $this->form_validation->error_array()) );exit;
+				
+		   
+			}else{
+				$inputArr=array();
+				$inputArr=array('U_FNAME'=>$post['first_name'],'U_LNAME'=>$post['last_name'],'U_EMAIL'=>$post['email']);
+					if(isset($post['new_password']) &&  $post['new_password']!=''){
+						$Pssdata = array('U_PASSWD' => md5($this->input->post('new_password')));
+						$inputArr= array_merge($inputArr,$Pssdata) ;
+					}
+					$where=array('U_ID'=>$post['user_id']);
+					$updateId=$this->common_model->updateData($this->common_model->cs_db,"users",$inputArr,$where);
+					if($updateId > 0)
+					{
+						 echo json_encode( array('status' => 'success','messages' => 'Successfully Saved Details') );exit;
+					}
+			}
 	}
 
-	/*public function delcategory()
+	public function oldpassword_check($old_password){
+		   $old_password_hash = md5($old_password);
+		   $where = array('email' => trim($post['email']));
+			$user = $this->common_model->selectData($this->common_model->cs_db,"users", '*', $where);
+			$user=$user[0];
+		    $old_password_db_hash = $user['U_PASSWD'];
+
+		   if($old_password_hash != $old_password_db_hash)
+		   {
+			  $this->form_validation->set_message('oldpassword_check', 'Old password not match');
+			  //$errors=$this->form_validation->error_array();
+			//	print_r($errors);exit;
+			  return FALSE;
+		   } 
+		   return TRUE;
+		}
+
+    public function addattendee()
 	{
-		$post=$this->input->post();
-		$where=array('cat_id'=>$post['catid']);
-		$deleteRes=$this->common_model->deleteData($this->common_model->cs_db,"faq_category",$where);
-		echo $deleteRes;exit;
+	   $html='';
+		$html.=$this->load->view('admin/users/addattendee','',TRUE);
+	   echo $html;
 	}
-	*/
+    public function editAttendee()
+	{
+	   $html='';
+		$html.=$this->load->view('admin/users/editAttendee','',TRUE);
+	   echo $html;
+	}
+
+    public function inviteAttendees()
+	{
+	   $html='';
+		$html.=$this->load->view('admin/users/inviteAttendees','',TRUE);
+	   echo $html;
+	}
+    public function messageAll()
+	{
+	   $html='';
+		$html.=$this->load->view('admin/users/messageAll','',TRUE);
+	   echo $html;
+	}
+    public function messageAttendee()
+	{
+	   $html='';
+		$html.=$this->load->view('admin/users/messageAttendee','',TRUE);
+	   echo $html;
+	}
+    public function resendTicket()
+	{
+	   $html='';
+		$html.=$this->load->view('admin/users/resendTicket','',TRUE);
+	   echo $html;
+	}
+    public function cancelAttendee()
+	{
+	   $html='';
+		$html.=$this->load->view('admin/users/cancelAttendee','',TRUE);
+	   echo $html;
+	} 
 }

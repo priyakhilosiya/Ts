@@ -28,7 +28,6 @@
 				<?php $this->load->view('admin/template/footer');?>
 			</footer>
 			<?php }?>
-
 			<?php
             $userDetails=$this->common_model->getUserDetails($this->user_session['U_ID']);
             $data['userDetails'] = $userDetails;

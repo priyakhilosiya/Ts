@@ -40,7 +40,7 @@ class Index extends CI_Controller {
 				$where = array('U_EMAIL' => $post['userid'],
 								'U_PASSWD' => "md5(".$post['password'].")"
 							);
-				$where = "U_EMAIL = '".$post['userid']."' AND U_PASSWD = md5('".$post['password']."')";
+				$where = "U_EMAIL = '".$post['userid']."' AND U_PASSWD = md5('".$post['password']."') AND U_ROLE IN('A','S')";
 				$admin = $this->common_model->selectDataArr($this->common_model->cs_db,"users", '*', $where);
 				//echo "<pre>";print_r($admin);exit;
 				if (count($admin) > 0) {

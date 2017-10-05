@@ -6,14 +6,19 @@ class Dashboard extends CI_Controller {
 		
 		parent::__construct();
 		$this->user_session = $this->session->userdata('user_session');
+		$userDetails=$this->common_model->getUserDetails($this->user_session['U_ID']);
 		//echo "PRIYA";print_r($userDetails);
 
 	}
 
 	public function index()
 	{
-	   $data['view'] = "index";
-       $this->load->view('admin/content', $data);
+		/*$this->user_session = $this->session->userdata('user_session');
+		$userDetails=$this->common_model->getUserDetails($this->user_session['U_ID']);*/
+		///pr($this->user_session['id']);exit;
+		$data['view'] = "index";
+		//$data['userDetails'] = $userDetails;
+		$this->load->view('admin/content', $data);
 	}
 
 	public function ajax_list()

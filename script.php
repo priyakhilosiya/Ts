@@ -52,7 +52,11 @@ $(document).ready(function(){
 <?php }else {?>
 <script src="<?=public_path()?>js/admin/<?=$this->router->fetch_class()?>/index.js" type="text/javascript"></script>
 <?php } ?>
+<script src="<?=public_path()?>js/btvalidationEngine.js" type="text/javascript"></script>
+<script src="<?=public_path()?>js/btvalidationEngine-en.js" type="text/javascript"></script>
+
 <script src="<?=public_path()?>js/Conference/conference.js" type="text/javascript"></script>
+<!--<script src="<?=public_path()?>js/admin/App.js" type="text/javascript"></script>-->
  
 <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
@@ -64,8 +68,6 @@ $(document).ready(function(){
 <script src="<?=public_path()?>vendor/moment/moment.js"></script>
 
 <script src="<?=public_path()?>vendor/fullcalendar/dist/fullcalendar.min.js"></script>
-<script src="<?=public_path()?>js/btvalidationEngine.js" type="text/javascript"></script>
-<script src="<?=public_path()?>js/btvalidationEngine-en.js" type="text/javascript"></script>
 <!--<script src="<?=public_path()?>js/admin/backend.js"></script>-->
 
     
