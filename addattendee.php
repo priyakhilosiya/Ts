@@ -1,5 +1,5 @@
 <div role="dialog" class="modal fade" tabindex="-1" role="dialog"  aria-hidden="true" id="AttendeeModal">
-   <form method="POST" action="http://nirav-event.kwetoo.com/event/1/attendees/invite" accept-charset="UTF-8" class="ajax"><input name="_token" value="ZqtchsCdM67hPPB4P3hlAR4QATtShR74lJzWICwp" type="hidden">
+   <form method="POST" action="<?= admin_path()?>/users/postAddattendee" accept-charset="UTF-8" class="ajax">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header text-center">
@@ -11,14 +11,20 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
+                           <?php if (count($ticketDetails>0)){?>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                    <label for="ticket_id" class="control-label required">Ticket</label>
-                                   <select class="form-control" id="ticket_id" name="ticket_id"><option value="1">silver ticket</option><option value="2">Golden</option></select>
+                                   <select class="form-control" id="ticket_id" name="ticket_id">
+                                    <?php foreach($ticketDetails as $key=>$val){   ?>
+                                        <option value="<?=$val['T_ID']?>"><?php echo $val['T_TITLE']?>
+                					<?php }?>
+                                  </select>
                                 </div>
                             </div>
                         </div>
+                        <?php  } ?>
 
                         <div class="row">
                             <div class="col-md-6">
@@ -40,7 +46,6 @@
 
                         <div class="form-group">
                             <label for="email" class="control-label required">Email Address</label>
-
                             <input class="form-control" name="email" id="email" type="text">
                         </div>
 
@@ -59,5 +64,6 @@
             </div>
         </div><!-- /end modal content-->
 
-    </div></form>
+    </div>
+    </form>
 </div>

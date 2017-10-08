@@ -1,4 +1,4 @@
-<div role="dialog" class="modal fade" tabindex="-1" role="dialog"  aria-hidden="true" id="AttendeeModal">
+<div role="dialog"  class="modal fade " style="display: none;">  
    <form method="POST" action="http://nirav-event.kwetoo.com/event/1/attendees/invite" accept-charset="UTF-8" class="ajax"><input name="_token" value="ZqtchsCdM67hPPB4P3hlAR4QATtShR74lJzWICwp" type="hidden">
     <div class="modal-dialog">
         <div class="modal-content">

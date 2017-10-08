@@ -11,11 +11,11 @@ Attendees
 <div class="col-md-9">
     <div class="btn-toolbar" role="toolbar">
         <div class="btn-group btn-group-responsive">
-            <button data-toggle="modal"   href="javascript:void(0);"  data-href="<?=admin_path()."users/addattendee"?> " class="loadModal btn btn-success" type="button"><i class="ico-user-plus"></i> Invite Attendee</button>
+            <button data-toggle="modal"   href="javascript:void(0);"  data-href="<?=admin_path()?>users/addattendee"  class="loadModal btn btn-success" type="button"><i class="ico-user-plus"></i> Invite Attendee</button>
         </div>
 
         <div class="btn-group btn-group-responsive">
-            <button data-toggle="modal"   href="javascript:void(0);"  data-href="<?=admin_path()."users/addattendee"?> " class="loadModal btn btn-success" type="button"><i class="ico-file"></i> Invite Attendees</button>
+            <button data-toggle="modal"   href="javascript:void(0);"  data-href="<?=admin_path()?>users/inviteAttendees" class="loadModal btn btn-success" type="button"><i class="ico-file"></i> Invite Attendees</button>
         </div>
 
         <div class="btn-group btn-group-responsive">
@@ -33,12 +33,12 @@ Attendees
             </ul>
         </div>
         <div class="btn-group btn-group-responsive">
-            <button data-toggle="modal"   href="javascript:void(0);"  data-href="<?=admin_path()."users/addattendee"?> " class="loadModal btn btn-success" type="button"><i class="ico-envelope"></i> Message</button>
+            <button data-toggle="modal"   href="javascript:void(0);"  data-href="<?=admin_path()?>users/messageAll" class="loadModal btn btn-success" type="button"><i class="ico-envelope"></i> Message</button>
         </div>
     </div>
 </div>
 <div class="col-md-3">
-   <form method="GET" action="http://nirav-event.kwetoo.com/event/2/attendees?sort_by=created_at" accept-charset="UTF-8">
+   <form method="GET" action="" accept-charset="UTF-8">
     <div class="input-group">
         <input name="q" value="" placeholder="Search Attendees.." class="form-control" type="text">
         <span class="input-group-btn">
@@ -77,64 +77,47 @@ Attendees
                         </tr>
                     </thead>
                     <tbody>
+                    <?php if($allUserDetails!="0" && count($allUserDetails)>0){  ?>
+
+                        <?php foreach ($allUserDetails as $key=>$val){?>
                     <tr class="attendee_5 ">
-                            <td>Paresh Patel</td>
+                            <td> <?php echo $val['U_FNAME']." ".$val['U_LNAME'];?></td>
                             <td>
-                                <a data-modal-id="MessageAttendee" class="loadModal" href="javascript:void(0);"  data-href="<?=admin_path()."users/addattendee"?> "> paresh.patel@gmail.com</a>
+                                <a data-modal-id="MessageAttendee" class="loadModal" href="javascript:void(0);"  data-href="<?=admin_path()?>users/messageAttendee"> <?php echo $val['U_EMAIL'];?></a>
                             </td>
                             <td>
-                                Golden Pass
+                                <?php echo $val['T_TITLE'];?>
                             </td>
                             <td>
-                                <a href="javascript:void(0);"  data-href="<?=admin_path()."users/addattendee"?> " title="View Order #SOZWI259" class="loadModal">
-                                    SOZWI259
+                                <a href="javascript:void(0);"  data-href="<?=admin_path()?>users/orderView" title="View Order '<?=$val['ORD_REFERENCE'];?>'" class="loadModal">
+                                     <?php echo $val['ORD_REFERENCE'];?>
                                 </a>
                             </td>
                             <td class="text-center">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span class="caret"></span></button>
                                     <ul class="dropdown-menu">
-                                                                                <li><a href="javascript:void(0);"  data-href="<?=admin_path()."users/addattendee"?> " class="loadModal"> Message</a></li>
-                                                                                <li><a href="javascript:void(0);"  data-href="<?=admin_path()."users/addattendee"?> " class="loadModal"> Resend Ticket</a></li>
+                                                                                <li><a href="javascript:void(0);"  data-modal-id="MessageAttendee" data-href="<?=admin_path()?>users/messageAttendee" class="loadModal"> Message</a></li>
+                                                                                <li><a href="javascript:void(0);"  data-href="<?=admin_path()?>users/resendTicket" class="loadModal"> Resend Ticket</a></li>
                                         <li><a href="http://nirav-event.kwetoo.com/event/2/attendees/5/export_ticket">Download PDF Ticket</a></li>
                                     </ul>
                                 </div>
 
-                                <a href="javascript:void(0);"  data-href="<?=admin_path()."users/addattendee"?> " class="loadModal btn btn-xs btn-primary"> Edit</a>
+                                <a href="javascript:void(0);"  data-href="<?=admin_path()?>users/editAttendee/<?=$val['ORD_ID'];?>/<?=$val['U_ID'];?>" class="loadModal btn btn-xs btn-primary"> Edit</a>
 
-                                <a href="javascript:void(0);"  data-href="<?=admin_path()."users/addattendee"?> " class="loadModal btn btn-xs btn-danger"> Cancel</a>
+                                <a href="javascript:void(0);"  data-href="<?=admin_path()?>users/cancelAttendee/<?=$val['ORD_ID'];?>/<?=$val['U_ID'];?>" class="loadModal btn btn-xs btn-danger"> Cancel</a>
                             </td>
-                        </tr>
+                      </tr>
+                      <?php }?>
+                      <?php }else{?>
 
-                        <tr class="attendee_5 ">
-                            <td>Priya Khilosiya</td>
-                            <td>
-                                <a href="javascript:void(0);"  data-href="<?=admin_path()."users/addattendee"?> " class="loadModal" >priya.khilosiya@gmail.com</a>
-                            </td>
-                            <td>
-                                Golden Pass
-                            </td>
-                            <td>
-                                <a href="javascript:void(0);" data-modal-id="view-order-4" data-href="http://nirav-event.kwetoo.com/event/order/4" title="View Order #SOZWI259" class="loadModal">
-                                    SOZWI2ff
-                                </a>
-                            </td>
-                            <td class="text-center">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span class="caret"></span></button>
-                                    <ul class="dropdown-menu">
-                                                                                <li><a data-modal-id="MessageAttendee" href="javascript:void(0);" data-href="http://nirav-event.kwetoo.com/event/5/attendees/single_message" class="loadModal"> Message</a></li>
-                                                                                <li><a data-modal-id="ResendTicketToAttendee" href="javascript:void(0);" data-href="http://nirav-event.kwetoo.com/event/5/attendees/resend_ticket" class="loadModal"> Resend Ticket</a></li>
-                                        <li><a href="http://nirav-event.kwetoo.com/event/2/attendees/5/export_ticket">Download PDF Ticket</a></li>
-                                    </ul>
-                                </div>
+                      <tr><td>no recorrd</td></tr>
 
-                                <a data-modal-id="EditAttendee" href="javascript:void(0);" data-href="http://nirav-event.kwetoo.com/event/2/attendees/5/edit" class="loadModal btn btn-xs btn-primary"> Edit</a>
+                      <?php }?>
 
-                                <a data-modal-id="CancelAttendee" href="javascript:void(0);" data-href="http://nirav-event.kwetoo.com/event/2/attendees/5/cancel" class="loadModal btn btn-xs btn-danger"> Cancel</a>
-                            </td>
-                        </tr>
-                                            </tbody>
+
+                   </tbody>
+
                 </table>
             </div>
         </div>
