@@ -13,12 +13,9 @@ class Users extends CI_Controller {
 	public function index()
 	{
 	
-		$updatedRecord=$this->input->get('update', TRUE);	
-		if($updatedRecord != '')
-		{
-			$data['updatedRecord'] = $updatedRecord;
-		}
-		$data['view'] = "index";
+	    $allUserDetails=$this->common_model->getAlluserattendeeDetails();
+	   	$data['view'] = "index";
+        $data['allUserDetails'] = $allUserDetails;
 		$this->load->view('admin/content', $data);
 	}
 
@@ -79,7 +76,7 @@ class Users extends CI_Controller {
 					$updateId=$this->common_model->updateData($this->common_model->cs_db,"users",$inputArr,$where);
 					if($updateId > 0)
 					{
-						 echo json_encode( array('status' => 'success','messages' => 'Successfully Saved Details') );exit;
+						 echo json_encode( array('status' => 'success','message' => 'Successfully Saved Details') );exit;
 					}
 			}
 	}
@@ -103,14 +100,23 @@ class Users extends CI_Controller {
 
     public function addattendee()
 	{
+	    $ticketDetails=$this->common_model->getUserTicketDetails();
+        $data['ticketDetails'] = $ticketDetails;
 	   $html='';
-		$html.=$this->load->view('admin/users/addattendee','',TRUE);
+	   $html.=$this->load->view('admin/users/addattendee', $data,TRUE);
 	   echo $html;
 	}
-    public function editAttendee()
+    public function editAttendee($order_id,$user_id)
 	{
+	    $ticketDetails=$this->common_model->getUserTicketDetails();
+        $data['ticketDetails'] = $ticketDetails;
+        $userAttendeeDetails=$this->common_model->getuserattendeeDetails($order_id,$user_id);
+        $userAttendeeDetails=$userAttendeeDetails[0];
+        $data['order_id'] = $order_id;
+        $data['user_id'] = $user_id;
+        $data['userAttendeeDetails'] = $userAttendeeDetails;
 	   $html='';
-		$html.=$this->load->view('admin/users/editAttendee','',TRUE);
+		$html.=$this->load->view('admin/users/editAttendee',$data,TRUE);
 	   echo $html;
 	}
 
@@ -138,10 +144,130 @@ class Users extends CI_Controller {
 		$html.=$this->load->view('admin/users/resendTicket','',TRUE);
 	   echo $html;
 	}
-    public function cancelAttendee()
+    public function cancelAttendee($order_id,$user_id)
 	{
 	   $html='';
 		$html.=$this->load->view('admin/users/cancelAttendee','',TRUE);
 	   echo $html;
+	}
+
+	public function orderView()
+	{
+	   $html='';
+		$html.=$this->load->view('admin/users/orderView','',TRUE);
+	   echo $html;
 	} 
+	public function postAddattendee(){
+          $post=$this->input->post();
+		  $attendeeInfo =$this->common_model->attendeeInfo(trim($post['user_id']),trim($post['order_id']));
+			if(isset($attendeeInfo[0]['U_ID']) &&  !empty($attendeeInfo[0]['U_ID']) && isset($attendeeInfo[0]['ORD_ID']) &&  !empty($attendeeInfo[0]['ORD_ID']))
+			{
+			    $user_id=$attendeeInfo[0]['U_ID'];
+                $order_id=$attendeeInfo[0]['ORD_ID'];
+				//update data
+				$currGmtDate=date('Y-m-d H:i:s');
+				$attendeeUpdateData = array(
+				'U_FNAME'=>$post['first_name'],'U_LNAME'=>$post['last_name'],'U_EMAIL'=>$post['email']
+				);
+                $attendeedetailsUpdateData = array(
+				'UD_FNAME'=>$post['first_name'],'UD_LNAME'=>$post['last_name']
+				);
+				$whereUpdate=array('U_ID'=>$user_id);
+				$updateId=$this->common_model->updateData($this->common_model->cs_db,'users',$attendeeUpdateData,$whereUpdate);
+                $whereDetailUpdate   =array('UD_UID'=>$user_id);
+                $updateId=$this->common_model->updateData($this->common_model->cs_db,'users_details',$attendeedetailsUpdateData,$whereDetailUpdate);
+
+            	$orderUpdateData = array(
+				'ORD_T_ID'=>$post['ticket_id']
+				);
+				$where=array('ORD_U_ID'=>$user_id,'ORD_ID'=>$order_id);
+				$updateId=$this->common_model->updateData($this->common_model->cs_db,'order_details',$orderUpdateData,$where);
+
+$attUpdateData = array(
+				'ATD_T_ID'=>$post['ticket_id']
+				);
+				$whereatt=array('ATD_U_ID'=>$user_id,'ATD_ORD_ID'=>$order_id);
+				$updateId=$this->common_model->updateData($this->common_model->cs_db,'attendees',$attUpdateData,$whereatt);
+
+				if($updateId > 0)
+				{
+                    echo json_encode( array('status' => 'success','message' => 'Attenddes Added Succesfully'));
+				}else{
+                     echo json_encode( array('status' => 'error','message' => 'something worng'));
+				}
+
+			}else{
+		        //insert users data
+			    //$newpassword = random_string('alnum', 8);
+                $newpassword='password';
+                $currGmtDate=date('Y-m-d H:i:s');
+			    $attendeeData = array(
+				'U_FNAME' => $post['first_name'],
+				'U_LNAME' =>$post['last_name'],
+				'U_EMAIL' =>$post['email'],
+				'U_PASSWD' =>md5($newpassword),
+				'U_ROLE' =>'C',
+                'U_CREATED' =>$currGmtDate,
+                'U_ADDEDBY_ID' =>$this->user_session['U_ID'],
+                'U_ACTIVE' =>'1',
+				);
+				$insId=$this->common_model->insertData($this->common_model->cs_db,'users',$attendeeData);
+				if($insId > 0)
+				{
+
+                      //insert users details data
+    				$attendeeDetailsData = array(
+    				'UD_FNAME' => $post['first_name'],
+    				'UD_LNAME' =>$post['last_name'],
+    			   'UD_UID' =>$insId,
+    				);
+				    $deatilsId=$this->common_model->insertData($this->common_model->cs_db,'users_details',$attendeeDetailsData);
+
+                    // Insert Order data  for tickets
+
+                    $ordersData = array(
+    				'ORD_U_ID' => $insId,
+    				'ORD_EVENT_ID' =>1,
+    			    'ORD_TOTAL_AMT' =>0,
+                    'ORD_ST_ID'=>1,
+                    'ORD_CREATED'=>$currGmtDate,
+    				);
+				    $orderId=$this->common_model->insertData($this->common_model->cs_db,'orders',$ordersData);
+                    if($orderId>0){
+                            // Insert Order details data  for tickets
+                    $ordersDetailsData = array(
+    				'ORD_ID' => $orderId,
+    				'ORD_T_ID' =>$post['ticket_id'],
+    			    'ORD_DTL_QTY' =>1,
+                    'ORD_U_ID' =>$insId,
+                    'ORD_DTL_AMT'=>0,
+    				);
+				    $orderdetailsId=$this->common_model->insertData($this->common_model->cs_db,'order_details',$ordersDetailsData);
+                       // Insert Order Attendess per tickets
+                    $attendData = array(
+                    'ATD_U_ID' =>$insId,
+                    'ATD_EVT_ID' =>1,
+                    'ATD_T_ID'=>$post['ticket_id'],
+                    'ATD_ORD_ID'=>$orderId,
+                    'ATD_CREATED'=> $currGmtDate,
+                    );
+                    $orderId=$this->common_model->insertData($this->common_model->cs_db,'attendees',$attendData);
+
+                    }
+
+                    echo json_encode( array('status' => 'success','message' => 'Attenddes Added Succesfully'));
+
+                }else{
+                    echo json_encode( array('status' => 'error','message' => 'something worng'));
+
+                }
+
+           }
+    }
+
+	public function postAddMessage(){
+
+		
+	}
+
 }

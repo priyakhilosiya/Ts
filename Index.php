@@ -12,10 +12,6 @@ class Index extends CI_Controller {
 		if (isset($session['id'])) {
 			redirect(base_url()."/admin/dashboard");
 		}
-		//echo "admin index controller";
-		
-		//$this->load->view('admin/index/index', $data);
-			//$data["view"] = "aboutus";
 		$data = array();
 		$post = $this->input->post();
 		if ($post) {
@@ -24,7 +20,6 @@ class Index extends CI_Controller {
 			if(trim($post['userid']) == ''){
 				$error['userid'] = 'Please enter email.';
 				$e_flag=1;
-				/*$response['userid'] = array('status'=>'error','message'=>"Please enter userid.");*/
 			}
 			if(!valid_email(trim($post['userid'])) && trim($post['userid']) == ''){
 				$error['userid'] = 'Please enter email.';
@@ -33,7 +28,6 @@ class Index extends CI_Controller {
 			if(trim($post['password']) == ''){
 				$error['password'] = 'Please enter password.';
 				$e_flag=1;
-				/*$response['password'] = array('status'=>'error','message'=>"Please enter password.");*/
 			}
 	
 			if ($e_flag == 0) {
@@ -65,7 +59,6 @@ class Index extends CI_Controller {
 
 		$this->load->view('admin/index/index', $data);
 
-		//$this->load->view("content", $data);
 	}
 	public function logout()
 	{
@@ -132,6 +125,15 @@ class Index extends CI_Controller {
 			$data['error_msg'] = $error;
 		}
 		$this->load->view('admin/index/forgotpassword', $data);
+	}
+
+	public function userProfile(){
+		$this->user_session = $this->session->userdata('user_session');
+		$userDetails=$this->common_model->getUserDetails($this->user_session['U_ID']);
+        $data['userDetails'] = $userDetails;
+		$html='';
+		$html.=$this->load->view('admin/index/userProfile',$data,TRUE);
+	    echo $html;
 	}
 
 

@@ -72,47 +72,94 @@ class common_model extends CI_Model{
        	return $data;
 	}
 
-	public function getFaqs($limit,$start)
-	{
-		$data=array();
-		$fromtable="faq_questions fq";
-		$fields='fq.*,fa.*,fc.*,(SELECT COUNT(*) FROM faq_comments fqc WHERE fqc.CM_QID=fq.Q_ID GROUP BY fqc.CM_QID) AS TotalComments';
-		$orderby='fq.Q_ID';
+	public function getAlluserattendeeDetails(){
+
+        $data=array();
+		$fromtable="users u";
+		$orderby='u.U_CREATED';
 		$orderType='DESC';
-		$this->db->select($fields);
-		//$this->db->select('*');
+        $this->db->where('u.U_ROLE=','C');
+        $this->db->select('*');
 		$this->db->from($fromtable);
-		$this->db->join('faq_answers fa', 'fq.Q_ID = fa.AW_QID', 'left');
-		$this->db->join('faq_category fc', 'fq.Q_CATID = fc.cat_id', 'left');
-		$this->db->where('fq.Q_DELETED !=','1');
+		$this->db->join('order_details od', 'u.U_ID=od.ORD_U_ID', 'left');
+        $this->db->join('tickets tc', 'od.ORD_T_ID=tc.T_ID', 'left');
+        $this->db->join('orders ord', 'ord.ORD_U_ID=u.U_ID', 'left');
+        $this->db->join('attendees as', 'as.ATD_ORD_ID=od.ORD_ID', 'left');
 		$this->db->order_by($orderby,$orderType);
-		if ($limit > 0 && $start == 0) {
-			$this->db->limit($limit);
-		}
-		if ($start > 0) {
-			$this->db->limit($limit,$start);
-		}
 		$query = $this->db->get();
-		//echo $this->db->last_query();exit;
 		$data = $query->result_array();
-		//echo "<pre>";print_r($data);exit;
+		return $data;
+	}
+
+    public function getuserattendeeDetails($order_id,$user_id){
+
+        $data=array();
+		$fromtable="users u";
+		$orderby='u.U_CREATED';
+		$orderType='DESC';
+        $this->db->where('u.U_ROLE=','C');
+        $this->db->select('*');
+		$this->db->from($fromtable);
+		$this->db->join('order_details od', 'u.U_ID=od.ORD_U_ID', 'left');
+        $this->db->join('attendees as', 'as.ATD_ORD_ID=od.ORD_ID', 'left');
+        $this->db->join('tickets tc', 'od.ORD_T_ID=tc.T_ID', 'left');
+        $this->db->join('orders ord', 'ord.ORD_U_ID=u.U_ID', 'left');
+		$this->db->order_by($orderby,$orderType);
+		$query = $this->db->get();
+		$data = $query->result_array();
 		return $data;
 	}
 	
-	public function getFaqsCount()
+	public function getUserTicketDetails()
 	{
 		$data=array();
-		$fromtable="faq_questions fq";
-		$orderby='fq.Q_ID';
+		$fromtable="tickets tc";
+		$orderby='tc.T_CREATED';
 		$orderType='DESC';
+        $this->db->where('tc.T_U_ID',$this->user_session['U_ID']);
 		$this->db->select('*');
 		$this->db->from($fromtable);
-		$this->db->join('faq_answers fa', 'fq.Q_ID = fa.AW_QID', 'left');
-		$this->db->where('fq.Q_DELETED !=','1');
+		$this->db->join('ticket_status ts', 'tc.T_ST_ID=ts.ST_ID', 'left');
+		$this->db->where('tc.T_DELETED !=','1');
+        $this->db->where('tc.T_ST_ID =','4');
 		$this->db->order_by($orderby,$orderType);
 		$query = $this->db->get();
-		$countRecord=$query->num_rows;
-		return $countRecord;
+		$data = $query->result_array();
+		return $data;
+	}
+
+    public function getTicketDetails()
+	{
+		$data=array();
+		$fromtable="tickets tc";
+		$orderby='tc.T_CREATED';
+		$orderType='DESC';
+        $this->db->where('tc.T_U_ID',$this->user_session['U_ID']);
+		$this->db->select('*');
+		$this->db->from($fromtable);
+		$this->db->join('ticket_status ts', 'tc.T_ST_ID=ts.ST_ID', 'left');
+		$this->db->where('tc.T_DELETED !=','1');
+        $this->db->order_by($orderby,$orderType);
+		$query = $this->db->get();
+		$data = $query->result_array();
+		return $data;
+	}
+
+     public function attendeeInfo($user_id,$order_id)
+	{
+		$data=array();
+		$fromtable="users u";
+		$orderby='u.U_CREATED';
+		$orderType='DESC';
+        $this->db->where('u.U_ID',$user_id);
+        $this->db->where('od.ORD_ID',$order_id);
+		$this->db->select('*');
+		$this->db->from($fromtable);
+		$this->db->join('order_details od', 'u.U_ID=od.ORD_U_ID', 'left');
+		$this->db->order_by($orderby,$orderType);
+		$query = $this->db->get();
+		$data = $query->result_array();
+		return $data;
 	}
 
 	public function faqInfo($questionId)
@@ -139,7 +186,7 @@ class common_model extends CI_Model{
 			$commentsinfo=$this->selectDataArr($this->db,'faq_comments','*',$where,$orderbyComments,$orderTypeComments);
 			if(count($commentsinfo) > 0)
 			{
-					$data[0]['comments']=$commentsinfo;
+					$data[0]['comments']=$commentsinfo;	
 			}
 			//get Question Comments
 		}
