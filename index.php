@@ -86,7 +86,7 @@ Attendees
                                 <a data-modal-id="MessageAttendee" class="loadModal" href="javascript:void(0);"  data-href="<?=admin_path()?>users/messageAttendee"> <?php echo $val['U_EMAIL'];?></a>
                             </td>
                             <td>
-                                <?php echo $val['T_TITLE'];?>
+                                <?php echo $val['ORD_T_NAME'];?>
                             </td>
                             <td>
                                 <a href="javascript:void(0);"  data-href="<?=admin_path()?>users/orderView" title="View Order '<?=$val['ORD_REFERENCE'];?>'" class="loadModal">
@@ -97,9 +97,9 @@ Attendees
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span class="caret"></span></button>
                                     <ul class="dropdown-menu">
-                                                                                <li><a href="javascript:void(0);"  data-modal-id="MessageAttendee" data-href="<?=admin_path()?>users/messageAttendee" class="loadModal"> Message</a></li>
-                                                                                <li><a href="javascript:void(0);"  data-href="<?=admin_path()?>users/resendTicket" class="loadModal"> Resend Ticket</a></li>
-                                        <li><a href="http://nirav-event.kwetoo.com/event/2/attendees/5/export_ticket">Download PDF Ticket</a></li>
+                                                                                <li><a href="javascript:void(0);"  data-modal-id="MessageAttendee" data-href="<?=admin_path()?>users/messageAttendee/<?=$val['ORD_ID'];?>/<?=$val['U_ID'];?>" class="loadModal"> Message</a></li>
+                                                                                <li><a href="javascript:void(0);"  data-href="<?=admin_path()?>users/resendTicket/<?=$val['ORD_ID'];?>/<?=$val['U_ID'];?>" class="loadModal"> Resend Ticket</a></li>
+                                        <li><a href="<?=admin_path()?>users/downloadPdf/<?=$val['ORD_ID'];?>/<?=$val['U_ID'];?>">Download PDF Ticket</a></li>
                                     </ul>
                                 </div>
 

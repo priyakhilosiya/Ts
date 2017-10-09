@@ -1,5 +1,5 @@
-<div role="dialog"  class="modal fade " style="display: none;">  
-    <form method="POST" action="http://nirav-event.kwetoo.com/event/1/attendees/message" accept-charset="UTF-8" class="reset ajax closeModalAfter"><input name="_token" value="ZqtchsCdM67hPPB4P3hlAR4QATtShR74lJzWICwp" type="hidden">
+<div role="dialog"  class="modal fade" tabindex="-1" role="dialog"  aria-hidden="true">
+    <form method="POST" action="<?= admin_path()?>/users/postAllAttendeeEmailMessage" accept-charset="UTF-8" class="ajax closeModalAfter"><input name="_token" value="ZqtchsCdM67hPPB4P3hlAR4QATtShR74lJzWICwp" type="hidden">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header text-center">
@@ -29,8 +29,13 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="recipients" class="control-label required">Send To</label>
-                                    <select class="form-control" id="recipients" name="recipients"><option value="all">All Event Attendees</option><optgroup label="Attendees with ticket type"><option value="1">silver ticket</option><option value="2">Golden</option></optgroup></select>
+                                    <?php
+                                    if (count($ticketDetails>0)){?>
+                                    <select class="form-control" id="recipients" name="recipients"><option value="all">All Event Attendees</option><optgroup label="Attendees with ticket type"><?php foreach($ticketDetails as $key=>$val){   ?>                                       <option value="<?=$val?>"><?php echo $val;?></option>
+                					<?php }?></optgroup></select>
+                                <?php  }?>
                                 </div>
+
 
                                 <div class="form-group hide">
                                     <label for="sent_time" class="control-label required">Schedule Send Time</label>
@@ -43,7 +48,6 @@
                         </div>
                     </div>
                     <div class="tab-pane" id="sent_messages">
-
                                                     <div class="alert alert-info">
                                 You have not sent any messages for this event.
                             </div>

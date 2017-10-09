@@ -81,11 +81,32 @@ class common_model extends CI_Model{
         $this->db->where('u.U_ROLE=','C');
         $this->db->select('*');
 		$this->db->from($fromtable);
+		$this->db->join('order_details od', 'u.U_ID=od.ORD_U_ID');
+        //$this->db->join('tickets tc', 'od.ORD_T_ID=tc.T_ID');
+        $this->db->join('orders ord', 'ord.ORD_U_ID=u.U_ID');
+		 $this->db->join('attendees ad', 'ad.ATD_ORD_ID=ord.ORD_ID');
+        $this->db->order_by($orderby,$orderType);
+		$query = $this->db->get();
+		//echo $this->db->last_query();exit;
+
+		$data = $query->result_array();
+		return $data;
+	}
+
+	public function getAllRegisteredUserDetails(){
+
+        $data=array();
+		$fromtable="users u";
+		$orderby='u.U_CREATED';
+		$orderType='DESC';
+        $this->db->where('u.U_ROLE=','C');
+        $this->db->select('*');
+		$this->db->from($fromtable);
 		$this->db->join('order_details od', 'u.U_ID=od.ORD_U_ID', 'left');
         $this->db->join('tickets tc', 'od.ORD_T_ID=tc.T_ID', 'left');
         $this->db->join('orders ord', 'ord.ORD_U_ID=u.U_ID', 'left');
-        $this->db->join('attendees as', 'as.ATD_ORD_ID=od.ORD_ID', 'left');
-		$this->db->order_by($orderby,$orderType);
+		$this->db->where('u.U_PASSWD!=','');
+        $this->db->order_by($orderby,$orderType);
 		$query = $this->db->get();
 		$data = $query->result_array();
 		return $data;
@@ -100,12 +121,13 @@ class common_model extends CI_Model{
         $this->db->where('u.U_ROLE=','C');
         $this->db->select('*');
 		$this->db->from($fromtable);
-		$this->db->join('order_details od', 'u.U_ID=od.ORD_U_ID', 'left');
-        $this->db->join('attendees as', 'as.ATD_ORD_ID=od.ORD_ID', 'left');
-        $this->db->join('tickets tc', 'od.ORD_T_ID=tc.T_ID', 'left');
-        $this->db->join('orders ord', 'ord.ORD_U_ID=u.U_ID', 'left');
-		$this->db->order_by($orderby,$orderType);
+        $this->db->join('order_details od', 'u.U_ID=od.ORD_U_ID');
+        //$this->db->join('tickets tc', 'od.ORD_T_ID=tc.T_ID');
+        $this->db->join('orders ord', 'ord.ORD_U_ID=u.U_ID');
+		 $this->db->join('attendees ad', 'ad.ATD_ORD_ID=ord.ORD_ID');
+       $this->db->order_by($orderby,$orderType);
 		$query = $this->db->get();
+		//echo $this->db->last_query();exit;
 		$data = $query->result_array();
 		return $data;
 	}
@@ -122,6 +144,7 @@ class common_model extends CI_Model{
 		$this->db->join('ticket_status ts', 'tc.T_ST_ID=ts.ST_ID', 'left');
 		$this->db->where('tc.T_DELETED !=','1');
         $this->db->where('tc.T_ST_ID =','4');
+		$this->db->where('tc.T_IS_PAUSED =','0');
 		$this->db->order_by($orderby,$orderType);
 		$query = $this->db->get();
 		$data = $query->result_array();

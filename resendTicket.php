@@ -1,5 +1,5 @@
-<div role="dialog" class="modal fade" style="display: block;" aria-hidden="false">
-   <form method="POST" action="http://nirav-event.kwetoo.com/event/3/attendees/resend_ticket" accept-charset="UTF-8" class="ajax reset closeModalAfter"><input name="_token" value="ZqtchsCdM67hPPB4P3hlAR4QATtShR74lJzWICwp" type="hidden">
+<div role="dialog"  class="modal fade" tabindex="-1" role="dialog"  aria-hidden="true">
+   <form method="POST" action="http://nirav-event.kwetoo.com/event/3/attendees/resend_ticket" accept-charset="UTF-8" class="ajax closeModalAfter"><input name="_token" value="ZqtchsCdM67hPPB4P3hlAR4QATtShR74lJzWICwp" type="hidden">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header text-center">

@@ -1,5 +1,5 @@
-<div role="dialog"  class="modal fade " style="display: none;">
-   <form method="POST" action="<?= admin_path()?>users/postAddattendee" accept-charset="UTF-8" class="ajax">
+<div role="dialog"  class="modal fade" tabindex="-1" role="dialog"  aria-hidden="true" id="EditAttendeeModal">
+   <form method="POST" action="<?= admin_path()?>users/postAddattendee" accept-charset="UTF-8" class="ajax closeModalAfter ">
        <input type="hidden" name="order_id" id="order_id" value="<?=$order_id;?>" />
        <input type="hidden" name="user_id" id="user_id" value="<?=$user_id;?>" />
     <div class="modal-dialog">
@@ -20,19 +20,31 @@
                                    <label for="ticket_id" class="control-label required">Ticket</label>
                                    <select class="form-control" id="ticket_id" name="ticket_id">
                                     <?php foreach($ticketDetails as $key=>$val){
-
-                                    if($userAttendeeDetails['ORD_T_ID']==$val['T_ID'])  {
+                                       // echo $userAttendeeDetails['ORD_T_NAME'];
+                                         $selected='';
+                                    if($userAttendeeDetails['ORD_T_NAME']==$val)  {
                                      $selected='selected="selected"';
 
                                     } else{
                                         $selected='';
                                     }
                                       ?>
-                                        <option value="<?=$val['T_ID']?>" <?php echo $selected;?>><?php echo $val['T_TITLE']?>
+                                        <option value="<?=$val?>" <?php echo $selected;?>><?php echo $val;?></option>
                 					<?php }?>
                                   </select>
                                 </div>
                             </div>
+							<div class="col-md-6">
+							    <?php if($userAttendeeDetails['ORD_CAT_TYPE']=='D')  {
+                                     $selectedD='checked="checked"';
+                                        $selectedPG='';
+                                    } else{
+                                       $selectedPG='checked="checked"';
+                                       $selectedD='';
+                                    }  ?>
+								<input type="radio" <?php echo $selectedD;?> name="cat_type" id="cat_type" value="D"/>Delegate
+								<input type="radio"  <?php echo $selectedPG;?> name="cat_type" id="cat_type" value="PG"/>PG
+							</div>
                         </div>
                          <?php  } ?>
                         <div class="row">
@@ -51,7 +63,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
+                           <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="email" class="control-label required">Email</label>
 

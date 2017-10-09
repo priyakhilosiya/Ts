@@ -1,5 +1,5 @@
-<div role="dialog"  class="modal fade " style="display: none;">  
-   <form method="POST" action="http://nirav-event.kwetoo.com/event/1/attendees/import" accept-charset="UTF-8" class="ajax" enctype="multipart/form-data"><input name="_token" value="ZqtchsCdM67hPPB4P3hlAR4QATtShR74lJzWICwp" type="hidden">
+<div role="dialog"  class="modal fade" tabindex="-1" role="dialog"  aria-hidden="true">
+   <form method="POST" action="http://nirav-event.kwetoo.com/event/1/attendees/import" accept-charset="UTF-8" class="ajax closeModalAfter" enctype="multipart/form-data"><input name="_token" value="ZqtchsCdM67hPPB4P3hlAR4QATtShR74lJzWICwp" type="hidden">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header text-center">

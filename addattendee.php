@@ -1,5 +1,5 @@
 <div role="dialog" class="modal fade" tabindex="-1" role="dialog"  aria-hidden="true" id="AttendeeModal">
-   <form method="POST" action="<?= admin_path()?>/users/postAddattendee" accept-charset="UTF-8" class="ajax">
+   <form method="POST" action="<?= admin_path()?>/users/postAddattendee" accept-charset="UTF-8" class="ajax closeModalAfter">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header text-center">
@@ -11,20 +11,25 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
-                           <?php if (count($ticketDetails>0)){?>
+                        <?php
+						if (count($ticketDetails>0)){?>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                    <label for="ticket_id" class="control-label required">Ticket</label>
                                    <select class="form-control" id="ticket_id" name="ticket_id">
                                     <?php foreach($ticketDetails as $key=>$val){   ?>
-                                        <option value="<?=$val['T_ID']?>"><?php echo $val['T_TITLE']?>
+                                        <option value="<?=$val?>"><?php echo $val;?></option>
                 					<?php }?>
                                   </select>
                                 </div>
                             </div>
+							<div class="col-md-6">
+								<input type="radio" checked='checked' name="cat_type" id="cat_type" value="D"/>Delegate
+								<input type="radio" name="cat_type" id="cat_type" value="PG"/>PG
+							</div>
                         </div>
-                        <?php  } ?>
+                        <?php  }?>
 
                         <div class="row">
                             <div class="col-md-6">

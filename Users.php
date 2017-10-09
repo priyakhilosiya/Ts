@@ -63,8 +63,8 @@ class Users extends CI_Controller {
 			 if($this->form_validation->run() == FALSE)
 			{
 				 echo json_encode( array('status' => 'error','messages' => $this->form_validation->error_array()) );exit;
-				
-		   
+
+
 			}else{
 				$inputArr=array();
 				$inputArr=array('U_FNAME'=>$post['first_name'],'U_LNAME'=>$post['last_name'],'U_EMAIL'=>$post['email']);
@@ -91,8 +91,6 @@ class Users extends CI_Controller {
 		   if($old_password_hash != $old_password_db_hash)
 		   {
 			  $this->form_validation->set_message('oldpassword_check', 'Old password not match');
-			  //$errors=$this->form_validation->error_array();
-			//	print_r($errors);exit;
 			  return FALSE;
 		   } 
 		   return TRUE;
@@ -100,20 +98,23 @@ class Users extends CI_Controller {
 
     public function addattendee()
 	{
-	    $ticketDetails=$this->common_model->getUserTicketDetails();
-        $data['ticketDetails'] = $ticketDetails;
-	   $html='';
+	    //$ticketDetails=$this->common_model->getUserTicketDetails();
+		$ticketDetails=TicketStructure();
+		$data['ticketDetails'] = $ticketDetails;
+		$html='';
 	   $html.=$this->load->view('admin/users/addattendee', $data,TRUE);
 	   echo $html;
 	}
     public function editAttendee($order_id,$user_id)
 	{
-	    $ticketDetails=$this->common_model->getUserTicketDetails();
+	    //$ticketDetails=$this->common_model->getUserTicketDetails();
+		$ticketDetails=TicketStructure();
         $data['ticketDetails'] = $ticketDetails;
         $userAttendeeDetails=$this->common_model->getuserattendeeDetails($order_id,$user_id);
         $userAttendeeDetails=$userAttendeeDetails[0];
         $data['order_id'] = $order_id;
         $data['user_id'] = $user_id;
+       // print_r($userAttendeeDetails);
         $data['userAttendeeDetails'] = $userAttendeeDetails;
 	   $html='';
 		$html.=$this->load->view('admin/users/editAttendee',$data,TRUE);
@@ -126,22 +127,44 @@ class Users extends CI_Controller {
 		$html.=$this->load->view('admin/users/inviteAttendees','',TRUE);
 	   echo $html;
 	}
-    public function messageAll()
+    public function messageAll($order_id,$user_id)
 	{
+
+	     $ticketDetails=TicketStructure();
+		$data['ticketDetails'] = $ticketDetails;
+          $userAttendeeDetails=$this->common_model->getuserattendeeDetails($order_id,$user_id);
+        $userAttendeeDetails=$userAttendeeDetails[0];
+        $data['order_id'] = $order_id;
+        $data['user_id'] = $user_id;
+        $data['userAttendeeDetails'] = $userAttendeeDetails;
 	   $html='';
-		$html.=$this->load->view('admin/users/messageAll','',TRUE);
+		$html.=$this->load->view('admin/users/messageAll',$data,TRUE);
 	   echo $html;
 	}
-    public function messageAttendee()
+    public function messageAttendee($order_id,$user_id)
 	{
+
+	     $ticketDetails=TicketStructure();
+		$data['ticketDetails'] = $ticketDetails;
+          $userAttendeeDetails=$this->common_model->getuserattendeeDetails($order_id,$user_id);
+        $userAttendeeDetails=$userAttendeeDetails[0];
+        $data['order_id'] = $order_id;
+        $data['user_id'] = $user_id;
+        $data['userAttendeeDetails'] = $userAttendeeDetails;
 	   $html='';
-		$html.=$this->load->view('admin/users/messageAttendee','',TRUE);
+		$html.=$this->load->view('admin/users/messageAttendee',$data,TRUE);
 	   echo $html;
 	}
     public function resendTicket()
 	{
 	   $html='';
 		$html.=$this->load->view('admin/users/resendTicket','',TRUE);
+	   echo $html;
+	}
+    public function downloadPdf()
+	{
+	   $html='';
+		$html.=$this->load->view('admin/users/downloadPdf','',TRUE);
 	   echo $html;
 	}
     public function cancelAttendee($order_id,$user_id)
@@ -159,15 +182,37 @@ class Users extends CI_Controller {
 	} 
 	public function postAddattendee(){
           $post=$this->input->post();
-		  $attendeeInfo =$this->common_model->attendeeInfo(trim($post['user_id']),trim($post['order_id']));
+           	$this->form_validation->set_rules('first_name', 'First Name', 'required');
+			$this->form_validation->set_rules('last_name', 'Last Name', 'required');
+			$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+            $this->form_validation->set_rules('ticket_id', 'Ticket', 'required');
+
+             if($this->form_validation->run() == FALSE)
+			{
+				 echo json_encode( array('status' => 'error','messages' => $this->form_validation->error_array()) );                    exit;
+			}else{
+
+
+		  if(isset($post['user_id']) && $post['user_id']!="" && $post['order_id']!=""){
+			$attendeeInfo =$this->common_model->attendeeInfo(trim($post['user_id']),trim($post['order_id']));
+		  }
 			if(isset($attendeeInfo[0]['U_ID']) &&  !empty($attendeeInfo[0]['U_ID']) && isset($attendeeInfo[0]['ORD_ID']) &&  !empty($attendeeInfo[0]['ORD_ID']))
 			{
+			    $currGmtDate=date('Y-m-d H:i:s');
 			    $user_id=$attendeeInfo[0]['U_ID'];
                 $order_id=$attendeeInfo[0]['ORD_ID'];
+			    $where = "U_EMAIL = '".$post['email']."' AND U_ROLE='C' AND U_ID!='".$user_id."'";
+                $usersdata = $this->common_model->selectDataArr($this->common_model->cs_db,"users", '*', $where);
+                   //print_r($usersdata);       exit();
+                   //echo $this->common_model->last_query();exit;
+                if(count($usersdata)>0){
+                   echo json_encode( array('status' => 'error','messages' => array('email'=>'Email address already exists')));    exit;
+                }
+
 				//update data
 				$currGmtDate=date('Y-m-d H:i:s');
 				$attendeeUpdateData = array(
-				'U_FNAME'=>$post['first_name'],'U_LNAME'=>$post['last_name'],'U_EMAIL'=>$post['email']
+				'U_FNAME'=>$post['first_name'],'U_LNAME'=>$post['last_name'],'U_EMAIL'=>$post['email'] ,'U_UPDATED'=> $currGmtDate
 				);
                 $attendeedetailsUpdateData = array(
 				'UD_FNAME'=>$post['first_name'],'UD_LNAME'=>$post['last_name']
@@ -177,26 +222,41 @@ class Users extends CI_Controller {
                 $whereDetailUpdate   =array('UD_UID'=>$user_id);
                 $updateId=$this->common_model->updateData($this->common_model->cs_db,'users_details',$attendeedetailsUpdateData,$whereDetailUpdate);
 
-            	$orderUpdateData = array(
-				'ORD_T_ID'=>$post['ticket_id']
+              $orderUpdateData = array(
+				'ORD_UPDATED'=>$currGmtDate,
 				);
 				$where=array('ORD_U_ID'=>$user_id,'ORD_ID'=>$order_id);
-				$updateId=$this->common_model->updateData($this->common_model->cs_db,'order_details',$orderUpdateData,$where);
+				$updateId=$this->common_model->updateData($this->common_model->cs_db,'orders',$orderUpdateData,                  $where);
+
+            	$orderDeatilsUpdateData = array(
+				'ORD_T_NAME'=>$post['ticket_id'],
+				'ORD_CAT_TYPE'=>$post['cat_type']
+				);
+				$where=array('ORD_U_ID'=>$user_id,'ORD_ID'=>$order_id);
+				$updateId=$this->common_model->updateData($this->common_model->cs_db,'order_details',$orderDeatilsUpdateData,$where);
 
 $attUpdateData = array(
-				'ATD_T_ID'=>$post['ticket_id']
+				'ATD_T_NAME'=>$post['ticket_id'],
+				'ATD_CAT_TYPE'=>$post['cat_type']  ,
+                'ATD_UPDATED'=>$currGmtDate,
 				);
 				$whereatt=array('ATD_U_ID'=>$user_id,'ATD_ORD_ID'=>$order_id);
 				$updateId=$this->common_model->updateData($this->common_model->cs_db,'attendees',$attUpdateData,$whereatt);
 
 				if($updateId > 0)
 				{
-                    echo json_encode( array('status' => 'success','message' => 'Attenddes Added Succesfully'));
+
+                    echo json_encode( array('status' => 'success','message' => 'Successfully Updated Attendee')); exit;
 				}else{
-                     echo json_encode( array('status' => 'error','message' => 'something worng'));
+                     echo json_encode( array('status' => 'error','messages' => 'something worng'));    exit;
 				}
 
 			}else{
+			    $where = "U_EMAIL = '".$post['email']."' AND U_ROLE='C'";
+                    $usersdata = $this->common_model->selectDataArr($this->common_model->cs_db,"users", '*', $where);
+                    if(count($usersdata)>0){
+                        echo json_encode( array('status' => 'error','messages' => array('email'=>'Email address already exists')));    exit;
+                    }
 		        //insert users data
 			    //$newpassword = random_string('alnum', 8);
                 $newpassword='password';
@@ -214,12 +274,12 @@ $attUpdateData = array(
 				$insId=$this->common_model->insertData($this->common_model->cs_db,'users',$attendeeData);
 				if($insId > 0)
 				{
-
-                      //insert users details data
+                    //insert users details data
     				$attendeeDetailsData = array(
     				'UD_FNAME' => $post['first_name'],
     				'UD_LNAME' =>$post['last_name'],
     			   'UD_UID' =>$insId,
+                   'UD_REGNO'=>radomreg()
     				);
 				    $deatilsId=$this->common_model->insertData($this->common_model->cs_db,'users_details',$attendeeDetailsData);
 
@@ -231,43 +291,120 @@ $attUpdateData = array(
     			    'ORD_TOTAL_AMT' =>0,
                     'ORD_ST_ID'=>1,
                     'ORD_CREATED'=>$currGmtDate,
+                    'ORD_REFERENCE'=>radomreg()
     				);
 				    $orderId=$this->common_model->insertData($this->common_model->cs_db,'orders',$ordersData);
                     if($orderId>0){
-                            // Insert Order details data  for tickets
-                    $ordersDetailsData = array(
-    				'ORD_ID' => $orderId,
-    				'ORD_T_ID' =>$post['ticket_id'],
-    			    'ORD_DTL_QTY' =>1,
-                    'ORD_U_ID' =>$insId,
-                    'ORD_DTL_AMT'=>0,
-    				);
-				    $orderdetailsId=$this->common_model->insertData($this->common_model->cs_db,'order_details',$ordersDetailsData);
-                       // Insert Order Attendess per tickets
-                    $attendData = array(
-                    'ATD_U_ID' =>$insId,
-                    'ATD_EVT_ID' =>1,
-                    'ATD_T_ID'=>$post['ticket_id'],
-                    'ATD_ORD_ID'=>$orderId,
-                    'ATD_CREATED'=> $currGmtDate,
-                    );
-                    $orderId=$this->common_model->insertData($this->common_model->cs_db,'attendees',$attendData);
+                        // Insert Order details data  for tickets
+						$ordersDetailsData = array(
+						'ORD_ID' => $orderId,
+						'ORD_T_NAME' =>$post['ticket_id'],
+						'ORD_DTL_QTY' =>1,
+						'ORD_U_ID' =>$insId,
+						'ORD_DTL_AMT'=>0,
+						'ORD_CAT_TYPE'=>$post['cat_type']
+						);
+						$orderdetailsId=$this->common_model->insertData($this->common_model->cs_db,'order_details',$ordersDetailsData);
+						   // Insert Order Attendess per tickets
+						$attendData = array(
+						'ATD_U_ID' =>$insId,
+						'ATD_EVT_ID' =>1,
+						'ATD_T_NAME'=>$post['ticket_id'],
+						'ATD_ORD_ID'=>$orderId,
+						'ATD_CREATED'=> $currGmtDate,
+						'ATD_CAT_TYPE'=>$post['cat_type']
+						);
+						$attendeeId=$this->common_model->insertData($this->common_model->cs_db,'attendees',$attendData);
 
                     }
+						if($orderId!='')
+					{
+						$where1['U_ID']=$insId;
+						$selectfields='*';
+						$userInfo=$this->common_model->selectDataArr($this->common_model->cs_db,'users',$selectfields,$where1);
+						//echo "<pre>";print_r($userInfo);exit;
+						$toEmail	= $userInfo[0]['U_EMAIL'];
+					}
+					/*sending mail to user and terabitz support*/
+					if(!empty($toEmail))
+					{
+					
+							$subject="Your ticket for the event Priya 's Interenational confirance";
+							$Data=array('useremail'=>$userInfo,'userInfo'=>$userInfo);
+							$emailTpl =$this->load->view('admin/users/attendeesEmail.php',$Data,true);
+							$mailSent = sendEmail($toEmail,$subject,$emailTpl,'priya.khilosiya@kraffsoft.com','Priya Khilosiya');
+							if ($mailSent) {
+								$data["mailsentTouser"] = "1";
+							} else {					
+								$data['mailsentTouser']="0";
+							}
+					}
+						/*sending mail to user and terabitz support*/	
 
-                    echo json_encode( array('status' => 'success','message' => 'Attenddes Added Succesfully'));
+                    echo json_encode( array('status' => 'success','message' => 'Attenddes Added Succesfully'));exit;
 
                 }else{
-                    echo json_encode( array('status' => 'error','message' => 'something worng'));
+                    echo json_encode( array('status' => 'error','messages' => 'something worng'));  exit;
 
                 }
 
            }
+        }
     }
 
-	public function postAddMessage(){
+	public function postAllAttendeeEmailMessage(){
+                if($orderId!='')
+					{
+						$where1['U_ID']=$insId;
+						$selectfields='*';
+						$userInfo=$this->common_model->selectDataArr($this->common_model->cs_db,'users',$selectfields,$where1);
+						//echo "<pre>";print_r($userInfo);exit;
+						$toEmail	= $userInfo[0]['U_EMAIL'];
+					}
+					/*sending mail to user and terabitz support*/
+					if(!empty($toEmail))
+					{
 
+							$subject="Your ticket for the event Priya 's Interenational confirance";
+							$Data=array('useremail'=>$userInfo,'userInfo'=>$userInfo);
+							$emailTpl =$this->load->view('admin/users/attendeesEmail.php',$Data,true);
+							$mailSent = sendEmail($toEmail,$subject,$emailTpl,'priya.khilosiya@kraffsoft.com','Priya Khilosiya');
+							if ($mailSent) {
+								$data["mailsentTouser"] = "1";
+							} else {
+								$data['mailsentTouser']="0";
+							}
+					}
 		
+	}
+
+    public function postAttendeeEmailMessage($order_id,$user_id){
+
+       // print_r($userAttendeeDetails);
+        $data['userAttendeeDetails'] = $userAttendeeDetails;
+                if($orderId!='')
+					{
+						$where1['U_ID']=$insId;
+						$selectfields='*';
+						$userInfo=$this->common_model->selectDataArr($this->common_model->cs_db,'users',$selectfields,$where1);
+						//echo "<pre>";print_r($userInfo);exit;
+						$toEmail	= $userInfo[0]['U_EMAIL'];
+					}
+					/*sending mail to user and terabitz support*/
+					if(!empty($toEmail))
+					{
+
+							$subject="Your ticket for the event Priya 's Interenational confirance";
+							$Data=array('useremail'=>$userInfo,'userInfo'=>$userInfo);
+							$emailTpl =$this->load->view('admin/users/attendeesEmail.php',$Data,true);
+							$mailSent = sendEmail($toEmail,$subject,$emailTpl,'priya.khilosiya@kraffsoft.com','Priya Khilosiya');
+							if ($mailSent) {
+								$data["mailsentTouser"] = "1";
+							} else {
+								$data['mailsentTouser']="0";
+							}
+					}
+
 	}
 
 }
