@@ -3,7 +3,7 @@
 class Users extends CI_Controller {
 
 	function __construct(){
-		
+
 		parent::__construct();
 		$this->user_session = $this->session->userdata('user_session');
         date_default_timezone_set('Asia/Kolkata');
@@ -69,6 +69,7 @@ class Users extends CI_Controller {
 
 
 			}else{
+			    $currGmtDate=date('Y-m-d H:i:s');
 			    if($this->input->post('password')!=""){
 			       $old_password_hash = md5($this->input->post('password'));
         		  	$where=array('U_ID'=>$post['user_id']);
@@ -84,7 +85,7 @@ class Users extends CI_Controller {
                    }
 
 				$inputArr=array();
-				$inputArr=array('U_FNAME'=>$post['first_name'],'U_LNAME'=>$post['last_name'],'U_EMAIL'=>$post['email']);
+				$inputArr=array('U_FNAME'=>$post['first_name'],'U_LNAME'=>$post['last_name'],'U_EMAIL'=>$post['email'],,'U_UPDATED'=> $currGmtDate);
 					if(isset($post['new_password']) &&  $post['new_password']!=''){
 						$Pssdata = array('U_PASSWD' => md5($this->input->post('new_password')));
 						$inputArr= array_merge($inputArr,$Pssdata) ;
@@ -98,20 +99,6 @@ class Users extends CI_Controller {
 			}
 	}
 
-	public function oldpassword_check($old_password){
-		   $old_password_hash = md5($old_password);
-		   $where = array('email' => trim($post['email']));
-			$user = $this->common_model->selectData($this->common_model->cs_db,"users", '*', $where);
-			$user=$user[0];
-		    $old_password_db_hash = $user['U_PASSWD'];
-
-		   if($old_password_hash != $old_password_db_hash)
-		   {
-			  $this->form_validation->set_message('oldpassword_check', 'Old password not match');
-			  return FALSE;
-		   }
-		   return TRUE;
-		}
 
     public function addattendee()
 	{
@@ -222,13 +209,13 @@ class Users extends CI_Controller {
                 $usersdata = $this->common_model->selectDataArr($this->common_model->cs_db,"users", '*', $where);
                    //print_r($usersdata);       exit();
                    //echo $this->common_model->last_query();exit;
-                if(count($usersdata)>0){
+                /*if(count($usersdata)>0){
                    echo json_encode( array('status' => 'error','messages' => array('email'=>'Email address already exists')));    exit;
-                }
+                }*/
 
 				//update data
 				$currGmtDate=date('Y-m-d H:i:s');
-				$attendeeUpdateData = array(
+				/*$attendeeUpdateData = array(
 				'U_FNAME'=>$post['first_name'],'U_LNAME'=>$post['last_name'],'U_EMAIL'=>$post['email'] ,'U_UPDATED'=> $currGmtDate
 				);
                 $attendeedetailsUpdateData = array(
@@ -237,7 +224,7 @@ class Users extends CI_Controller {
 				$whereUpdate=array('U_ID'=>$user_id);
 				$updateId=$this->common_model->updateData($this->common_model->cs_db,'users',$attendeeUpdateData,$whereUpdate);
                 $whereDetailUpdate   =array('UD_UID'=>$user_id);
-                $updateId=$this->common_model->updateData($this->common_model->cs_db,'users_details',$attendeedetailsUpdateData,$whereDetailUpdate);
+                $updateId=$this->common_model->updateData($this->common_model->cs_db,'users_details',$attendeedetailsUpdateData,$whereDetailUpdate);*/
 
               $orderUpdateData = array(
 				'ORD_UPDATED'=>$currGmtDate,
@@ -247,7 +234,7 @@ class Users extends CI_Controller {
 
             	$orderDeatilsUpdateData = array(
 				'ORD_T_NAME'=>$post['ticket_id'],
-				'ORD_CAT_TYPE'=>$post['cat_type']
+				//'ORD_CAT_TYPE'=>$post['cat_type']
 				);
 				$where=array('ORD_U_ID'=>$user_id,'ORD_ID'=>$order_id);
 				$updateId=$this->common_model->updateData($this->common_model->cs_db,'order_details',$orderDeatilsUpdateData,$where);
@@ -270,7 +257,7 @@ $attUpdateData = array(
 				}
 
 			}else{
-			    $where = "U_EMAIL = '".$post['email']."' AND U_ROLE='C'";
+			    $where = "U_EMAIL = '".$post['U_LOGIN']."' AND U_ROLE='C'";
                     $usersdata = $this->common_model->selectDataArr($this->common_model->cs_db,"users", '*', $where);
                     if(count($usersdata)>0){
                         echo json_encode( array('status' => 'error','messages' => array('email'=>'Email address already exists')));    exit;
@@ -298,7 +285,7 @@ $attUpdateData = array(
     				'UD_FNAME' => $post['first_name'],
     				'UD_LNAME' =>$post['last_name'],
     			   'UD_UID' =>$insId,
-                   'UD_REGNO'=>radomreg()
+                   'UD_REGNO'=>"RES".$currGmtDate.$insId
     				);
 				    $deatilsId=$this->common_model->insertData($this->common_model->cs_db,'users_details',$attendeeDetailsData);
 
@@ -310,7 +297,7 @@ $attUpdateData = array(
     			    'ORD_TOTAL_AMT' =>0,
                     'ORD_ST_ID'=>1,
                     'ORD_CREATED'=>$currGmtDate,
-                    'ORD_REFERENCE'=>radomreg()
+                    'ORD_REFERENCE'=>generateRandomString()
     				);
 				    $orderId=$this->common_model->insertData($this->common_model->cs_db,'orders',$ordersData);
                     if($orderId>0){
@@ -331,7 +318,10 @@ $attUpdateData = array(
 						'ATD_T_NAME'=>$post['ticket_id'],
 						'ATD_ORD_ID'=>$orderId,
 						'ATD_CREATED'=> $currGmtDate,
-						'ATD_CAT_TYPE'=>$post['cat_type']
+						'ATD_CAT_TYPE'=>$post['cat_type'],
+						'ATD_FNAME'=>$post['first_name'],
+						'ATD_EMAIL' => $post['email'],
+    					'ATD_LNAME' =>$post['last_name'],
 						);
 						$attendeeId=$this->common_model->insertData($this->common_model->cs_db,'attendees',$attendData);
 

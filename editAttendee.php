@@ -51,14 +51,14 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="first_name" class="control-label required">FIRST&nbsp;NAME</label>
-                                    <input class="form-control" name="first_name" value="<?= $userAttendeeDetails['U_FNAME'];?>" id="first_name" type="text">
+                                    <input class="form-control" name="first_name" value="<?= $userAttendeeDetails['ATD_FNAME'];?>" id="first_name" type="text">
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="last_name" class="control-label">LAST&nbsp;NAME</label>
-                                    <input class="form-control" name="last_name" value="<?= $userAttendeeDetails['U_LNAME'];?>" id="last_name" type="text">
+                                    <input class="form-control" name="last_name" value="<?= $userAttendeeDetails['ATD_LNAME'];?>" id="last_name" type="text">
                                 </div>
                             </div>
                         </div>
@@ -67,7 +67,7 @@
                                 <div class="form-group">
                                     <label for="email" class="control-label required">Email</label>
 
-                                    <input class="form-control" name="email" value="<?= $userAttendeeDetails['U_EMAIL'];?>" id="email" type="text">
+                                    <input class="form-control" name="email" value="<?= $userAttendeeDetails['ATD_EMAIL'];?>" id="email" type="text">
                                 </div>
                             </div>
                         </div>

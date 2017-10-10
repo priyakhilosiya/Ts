@@ -1,7 +1,7 @@
 <div class="container-fluid">
         <div class="page-title">
             <h1 class="title"><i class="ico-users"></i>
-Attendees
+Sponsor
 </h1>
         </div>
                 <!--  header -->
@@ -11,36 +11,29 @@ Attendees
 <div class="col-md-9">
     <div class="btn-toolbar" role="toolbar">
         <div class="btn-group btn-group-responsive">
-            <button data-toggle="modal"   href="javascript:void(0);"  data-href="<?=admin_path()?>users/addattendee"  class="loadModal btn btn-success" type="button"><i class="ico-user-plus"></i> Invite Attendee</button>
+            <button data-toggle="modal"   href="javascript:void(0);"  data-href="<?=admin_path()?>sponsor/addsponsor"  class="loadModal btn btn-success" type="button"><i class="ico-user-plus"></i> Add  Sponsor</button>
         </div>
 
-        <div class="btn-group btn-group-responsive">
-            <button data-toggle="modal"   href="javascript:void(0);"  data-href="<?=admin_path()?>users/inviteAttendees" class="loadModal btn btn-success" type="button"><i class="ico-file"></i> Invite Attendees</button>
-        </div>
-
-        <div class="btn-group btn-group-responsive">
-            <a class="btn btn-success" href="http://nirav-event.kwetoo.com/event/2/attendees/print" target="_blank"><i class="ico-print"></i> Print Attendee List</a>
-        </div>
-        <div class="btn-group btn-group-responsive">
+       <!--<div class="btn-group btn-group-responsive">
             <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
                 <i class="ico-users"></i> Export <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" role="menu">
-                <li><a href="http://nirav-event.kwetoo.com/event/2/attendees/export/xlsx">Excel (XLSX)</a></li>
-                <li><a href="http://nirav-event.kwetoo.com/event/2/attendees/export/xls">Excel (XLS)</a></li>
-                <li><a href="http://nirav-event.kwetoo.com/event/2/attendees/export/csv">CSV</a></li>
-                <li><a href="http://nirav-event.kwetoo.com/event/2/attendees/export/html">HTML</a></li>
+                <li><a href="http://nirav-event.kwetoo.com/event/2/sponsors/export/xlsx">Excel (XLSX)</a></li>
+                <li><a href="http://nirav-event.kwetoo.com/event/2/sponsors/export/xls">Excel (XLS)</a></li>
+                <li><a href="http://nirav-event.kwetoo.com/event/2/sponsors/export/csv">CSV</a></li>
+                <li><a href="http://nirav-event.kwetoo.com/event/2/sponsors/export/html">HTML</a></li>
             </ul>
-        </div>
-        <div class="btn-group btn-group-responsive">
-            <button data-toggle="modal"   href="javascript:void(0);"  data-href="<?=admin_path()?>users/messageAll" class="loadModal btn btn-success" type="button"><i class="ico-envelope"></i> Message</button>
-        </div>
+        </div>-->
+        <!--<div class="btn-group btn-group-responsive">
+            <button data-toggle="modal"   href="javascript:void(0);"  data-href="<?=admin_path()?>sponsor/messageAll" class="loadModal btn btn-success" type="button"><i class="ico-envelope"></i> Message</button>
+        </div>-->
     </div>
 </div>
 <div class="col-md-3">
    <form method="GET" action="" accept-charset="UTF-8">
     <div class="input-group">
-        <input name="q" value="" placeholder="Search Attendees.." class="form-control" type="text">
+        <input name="q" value="" placeholder="Search sponsors.." class="form-control" type="text">
         <span class="input-group-btn">
             <button class="btn btn-default" type="submit"><i class="ico-search"></i></button>
         </span>
@@ -52,9 +45,10 @@ Attendees
         <!--/  header -->
 
         <!--Content-->
-
-<!--Start Attendees table-->
+<!--Start Sponsor table-->
 <div class="row">
+
+	 <?php if($allSponsorDetails!="0" && count($allSponsorDetails)>0){  ?>	
     <div class="col-md-12">
                 <div class="panel">
             <div class="table-responsive">
@@ -68,64 +62,66 @@ Attendees
                                <a href="?sort_by=email&amp;sort_order=asc&amp;q=&amp;page=1" class="col-sort ">Email<i class="ico-arrow-up22"></i></a>
                             </th>
                             <th>
-                               <a href="?sort_by=ticket_id&amp;sort_order=asc&amp;q=&amp;page=1" class="col-sort ">Ticket<i class="ico-arrow-up22"></i></a>
-                            </th>
-                            <th>
-                               <a href="?sort_by=order_reference&amp;sort_order=asc&amp;q=&amp;page=1" class="col-sort ">Order Ref.<i class="ico-arrow-up22"></i></a>
+                               <a href="?sort_by=ticket_id&amp;sort_order=asc&amp;q=&amp;page=1" class="col-sort ">No of Ticket<i class="ico-arrow-up22"></i></a>
                             </th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                    <?php if($allUserDetails!="0" && count($allUserDetails)>0){  ?>
+                   
 
-                        <?php foreach ($allUserDetails as $key=>$val){?>
-                    <tr class="attendee_5 ">
+                    <?php foreach ($allSponsorDetails as $key=>$val){?>
+                    <tr class="sponsor_5 ">
                             <td> <?php echo $val['U_FNAME']." ".$val['U_LNAME'];?></td>
                             <td>
-                                <a data-modal-id="MessageAttendee" class="loadModal" href="javascript:void(0);"  data-href="<?=admin_path()?>users/messageAttendee"> <?php echo $val['U_EMAIL'];?></a>
+                                <a data-modal-id="Messagesponsor" class="loadModal" href="javascript:void(0);"  data-href="<?=admin_path()?>sponsor/messageSponsor"> <?php echo $val['U_EMAIL'];?></a>
                             </td>
-                            <td>
-                                <?php echo $val['ORD_T_NAME'];?>
-                            </td>
-                            <td>
-                                <a href="javascript:void(0);"  data-href="<?=admin_path()?>users/orderView" title="View Order '<?=$val['ORD_REFERENCE'];?>'" class="loadModal">
-                                     <?php echo $val['ORD_REFERENCE'];?>
-                                </a>
-                            </td>
+                            <td><?php echo $val['ORG_TICKETS']?></td>
                             <td class="text-center">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span class="caret"></span></button>
-                                    <ul class="dropdown-menu">
-                                                                                <li><a href="javascript:void(0);"  data-modal-id="MessageAttendee" data-href="<?=admin_path()?>users/messageAttendee/<?=$val['ORD_ID'];?>/<?=$val['U_ID'];?>" class="loadModal"> Message</a></li>
-                                                                                <li><a href="javascript:void(0);"  data-href="<?=admin_path()?>users/resendTicket/<?=$val['ORD_ID'];?>/<?=$val['U_ID'];?>" class="loadModal"> Resend Ticket</a></li>
-                                        <li><a href="<?=admin_path()?>users/downloadPdf/<?=$val['ORD_ID'];?>/<?=$val['U_ID'];?>">Download PDF Ticket</a></li>
-                                    </ul>
-                                </div>
+                                <a href="javascript:void(0);"  data-href="<?=admin_path()?>sponsor/editSponsor/<?=$val['U_ID'];?>" class="loadModal btn btn-xs btn-primary"> Edit</a>
 
-                                <a href="javascript:void(0);"  data-href="<?=admin_path()?>users/editAttendee/<?=$val['ORD_ID'];?>/<?=$val['U_ID'];?>" class="loadModal btn btn-xs btn-primary"> Edit</a>
-
-                                <a href="javascript:void(0);"  data-href="<?=admin_path()?>users/cancelAttendee/<?=$val['ORD_ID'];?>/<?=$val['U_ID'];?>" class="loadModal btn btn-xs btn-danger"> Cancel</a>
+                                <a href="javascript:void(0);"  data-href="<?=admin_path()?>sponsor/cancelSponsor/<?=$val['U_ID'];?>" class="loadModal btn btn-xs btn-danger"> Cancel</a>
                             </td>
                       </tr>
                       <?php }?>
-                      <?php }else{?>
-
-                      <tr><td>no recorrd</td></tr>
-
-                      <?php }?>
-
-
                    </tbody>
 
                 </table>
             </div>
         </div>
             </div>
+
+			<?php }else{?>
+			<div class="col-md-12">
+				
+						<style>
+							.page-header {
+								/*opacity: .1;*/
+							}
+						</style>
+						<div class="col-lg-6 col-lg-offset-3">
+							<div class="panel panel-minimal" style="margin-top:10%;">
+								<div class="panel-body text-center">
+									<i class="    ico-search
+						  fsize112"></i>
+								</div>
+								<div class="panel-body text-center">
+									<h1 style="font-weight: 100;" class=" text-center fsize32 mb10 mt0">
+											No Search Results
+									</h1>
+									<h5 style="font-size: 20px; font-weight: 100; line-height: 1.5em;" class=" pa10 text-primary text-center ">
+											There was nothing found matching the term 'aaa'
+									</h5>
+										
+								</div>
+							</div>
+						</div>        
+						</div>
+					 <?php }?>
     <div class="col-md-12">
 
     </div>
-</div>    <!--/End attendees table-->
+</div>    <!--/End sponsors table-->
 
         <!--/Content-->
     </div>

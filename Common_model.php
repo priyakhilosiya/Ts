@@ -74,18 +74,36 @@ class common_model extends CI_Model{
 
 	public function getAlluserattendeeDetails(){
 
-        $data=array();
+       /* $data=array();
 		$fromtable="users u";
 		$orderby='u.U_CREATED';
 		$orderType='DESC';
         $this->db->where('u.U_ROLE=','C');
         $this->db->select('*');
 		$this->db->from($fromtable);
-		$this->db->join('order_details od', 'u.U_ID=od.ORD_U_ID');
+		//$this->db->join('order_details od', 'u.U_ID=od.ORD_U_ID');
         //$this->db->join('tickets tc', 'od.ORD_T_ID=tc.T_ID');
         $this->db->join('orders ord', 'ord.ORD_U_ID=u.U_ID');
 		 $this->db->join('attendees ad', 'ad.ATD_ORD_ID=ord.ORD_ID');
         $this->db->order_by($orderby,$orderType);
+		$query = $this->db->get();
+		echo $this->db->last_query();exit;
+
+		$data = $query->result_array();
+		return $data;*/
+
+		$data=array();
+		$fromtable="attendees ad";
+		$orderby='ad.ATD_CREATED';
+		$orderType='DESC';
+        $this->db->where('u.U_ROLE=','C');
+        $this->db->select('*');
+		$this->db->from($fromtable);
+		$this->db->join('order_details od', 'ad.ATD_ORD_ID=od.ORD_ID','left');
+		$this->db->join('orders ord', 'ord.ORD_ID=ad.ATD_ORD_ID','left');
+		$this->db->join('users u', 'u.U_ID=ad.ATD_U_ID','left');
+        $this->db->order_by($orderby,$orderType);
+		$this->db->where('od.ORD_CAT_TYPE!=','A');
 		$query = $this->db->get();
 		//echo $this->db->last_query();exit;
 
@@ -114,7 +132,7 @@ class common_model extends CI_Model{
 
     public function getuserattendeeDetails($order_id,$user_id){
 
-        $data=array();
+       /* $data=array();
 		$fromtable="users u";
 		$orderby='u.U_CREATED';
 		$orderType='DESC';
@@ -122,15 +140,38 @@ class common_model extends CI_Model{
         $this->db->select('*');
 		$this->db->from($fromtable);
         $this->db->join('order_details od', 'u.U_ID=od.ORD_U_ID');
-        //$this->db->join('tickets tc', 'od.ORD_T_ID=tc.T_ID');
         $this->db->join('orders ord', 'ord.ORD_U_ID=u.U_ID');
 		 $this->db->join('attendees ad', 'ad.ATD_ORD_ID=ord.ORD_ID');
-       $this->db->order_by($orderby,$orderType);
+        $this->db->order_by($orderby,$orderType);
+		$this->db->where('u.U_ID=',$user_id);
+		$this->db->where('ord.ORD_ID=',$order_id);
+		$this->db->where('od.ORD_CAT_TYPE!=','A');
+		$query = $this->db->get();
+		//echo $this->db->last_query();exit;
+		$data = $query->result_array();
+		return $data;*/
+
+		$data=array();
+		$fromtable="attendees ad";
+		$orderby='ad.ATD_CREATED';
+		$orderType='DESC';
+        $this->db->where('u.U_ROLE=','C');
+        $this->db->select('*');
+		$this->db->from($fromtable);
+		$this->db->join('order_details od', 'ad.ATD_ORD_ID=od.ORD_ID','left');
+		$this->db->join('orders ord', 'ord.ORD_ID=ad.ATD_ORD_ID','left');
+		$this->db->join('users u', 'u.U_ID=ad.ATD_U_ID','left');
+		$this->db->where('u.U_ID=',$user_id);
+		$this->db->where('ord.ORD_ID=',$order_id);
+        $this->db->order_by($orderby,$orderType);
+		$this->db->where('od.ORD_CAT_TYPE!=','A');
 		$query = $this->db->get();
 		//echo $this->db->last_query();exit;
 		$data = $query->result_array();
 		return $data;
 	}
+
+	
 	
 	public function getUserTicketDetails()
 	{
@@ -184,6 +225,65 @@ class common_model extends CI_Model{
 		$data = $query->result_array();
 		return $data;
 	}
+
+
+
+	public function getAllSponsorDetails(){
+
+        $data=array();
+		$fromtable="users u";
+		$orderby='u.U_CREATED';
+		$orderType='DESC';
+        $this->db->where('u.U_ROLE=','S');
+        $this->db->select('*');
+		$this->db->from($fromtable);
+		 $this->db->join('organization_sponsors as', 'as.ORG_U_ID=u.U_ID');
+        $this->db->order_by($orderby,$orderType);
+		$query = $this->db->get();
+		//echo $this->db->last_query();exit;
+
+		$data = $query->result_array();
+		return $data;
+	}
+
+	public function getuserSponsorDetails($user_id){
+		 $data=array();
+		$fromtable="users u";
+		$orderby='u.U_CREATED';
+		$orderType='DESC';
+        $this->db->where('u.U_ROLE=','S');
+        $this->db->where('u.U_ID',$user_id);
+        $this->db->select('*');
+		$this->db->from($fromtable);
+		 $this->db->join('organization_sponsors as', 'as.ORG_U_ID=u.U_ID');
+        $this->db->order_by($orderby,$orderType);
+		$query = $this->db->get();
+		//echo $this->db->last_query();exit;
+
+		$data = $query->result_array();
+		return $data;
+	}
+
+    public function sponsorInfo($user_id){
+        $data=array();
+		$fromtable="users u";
+		$orderby='u.U_CREATED';
+		$orderType='DESC';
+        $this->db->where('u.U_ROLE=','S');
+        $this->db->where('u.U_ID',$user_id);
+        $this->db->select('*');
+		$this->db->from($fromtable);
+		 $this->db->join('organization_sponsors as', 'as.ORG_U_ID=u.U_ID');
+        $this->db->order_by($orderby,$orderType);
+		$query = $this->db->get();
+		//echo $this->db->last_query();exit;
+
+		$data = $query->result_array();
+		return $data;
+
+
+    }
+
 
 	public function faqInfo($questionId)
 	{
