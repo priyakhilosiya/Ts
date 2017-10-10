@@ -53,11 +53,14 @@ class Users extends CI_Controller {
 			$this->form_validation->set_rules('last_name', 'Last Name', 'required');
 			$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
 			if($this->input->post('password')){
-				$this->form_validation->set_rules('password', 'Password', 'trim|oldpassword_check');
+				$this->form_validation->set_rules('password', 'Password', 'required');
 			}
-			if($this->input->post('new_password_confirmation')){
-				$this->form_validation->set_rules('new_password_confirmation', 'Confirm Password', 'matches[new_password]');
-			}
+            if($this->input->post('password')!=""){
+              $this->form_validation->set_rules('new_password_confirmation', 'Confirm Password', 'required|matches[new_password]');
+					$this->form_validation->set_rules('new_password', 'New Password', 'required|matches[new_password_confirmation]');
+
+            }
+
 			$errors=$this->form_validation->error_array();
 				
 			 if($this->form_validation->run() == FALSE)
@@ -66,6 +69,20 @@ class Users extends CI_Controller {
 
 
 			}else{
+			    if($this->input->post('password')!=""){
+			       $old_password_hash = md5($this->input->post('password'));
+        		  	$where=array('U_ID'=>$post['user_id']);
+        			$user = $this->common_model->selectDataArr($this->common_model->cs_db,"users", '*', $where);
+        			$user=$user[0];
+                   // pr($user);
+        		    $old_password_db_hash = $user['U_PASSWD'];
+
+        		   if($old_password_hash != $old_password_db_hash)
+        		   {
+        			  echo json_encode( array('status' => 'error','messages' => array('password'=>'Password is not correct')));    exit;
+        		   }
+                   }
+
 				$inputArr=array();
 				$inputArr=array('U_FNAME'=>$post['first_name'],'U_LNAME'=>$post['last_name'],'U_EMAIL'=>$post['email']);
 					if(isset($post['new_password']) &&  $post['new_password']!=''){
@@ -92,7 +109,7 @@ class Users extends CI_Controller {
 		   {
 			  $this->form_validation->set_message('oldpassword_check', 'Old password not match');
 			  return FALSE;
-		   } 
+		   }
 		   return TRUE;
 		}
 
@@ -237,8 +254,9 @@ class Users extends CI_Controller {
 
 $attUpdateData = array(
 				'ATD_T_NAME'=>$post['ticket_id'],
-				'ATD_CAT_TYPE'=>$post['cat_type']  ,
+                'ATD_CAT_TYPE'=>$post['cat_type']  ,
                 'ATD_UPDATED'=>$currGmtDate,
+                'ATD_FNAME'=>$post['first_name'],'ATD_LNAME'=>$post['last_name'],'ATD_EMAIL'=>$post['email']
 				);
 				$whereatt=array('ATD_U_ID'=>$user_id,'ATD_ORD_ID'=>$order_id);
 				$updateId=$this->common_model->updateData($this->common_model->cs_db,'attendees',$attUpdateData,$whereatt);
@@ -265,6 +283,7 @@ $attUpdateData = array(
 				'U_FNAME' => $post['first_name'],
 				'U_LNAME' =>$post['last_name'],
 				'U_EMAIL' =>$post['email'],
+                'U_LOGIN' =>$post['email'],
 				'U_PASSWD' =>md5($newpassword),
 				'U_ROLE' =>'C',
                 'U_CREATED' =>$currGmtDate,

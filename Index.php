@@ -31,12 +31,12 @@ class Index extends CI_Controller {
 			}
 	
 			if ($e_flag == 0) {
-				$where = array('U_EMAIL' => $post['userid'],
+				$where = array('U_LOGIN' => $post['userid'],
 								'U_PASSWD' => "md5(".$post['password'].")"
 							);
-				$where = "U_EMAIL = '".$post['userid']."' AND U_PASSWD = md5('".$post['password']."') AND U_ROLE IN('A','S')";
+				$where = "U_LOGIN = '".$post['userid']."' AND U_PASSWD = md5('".$post['password']."') AND U_ROLE IN('A','S')";
 				$admin = $this->common_model->selectDataArr($this->common_model->cs_db,"users", '*', $where);
-				//echo "<pre>";print_r($admin);exit;
+			 // echo $this->common_model->last_query();exit;
 				if (count($admin) > 0) {
 					# create session
 					$admin = $admin[0];
@@ -81,7 +81,7 @@ class Index extends CI_Controller {
 			}
 
 			if ($e_flag == 0) {
-				$where = array('email' => trim($post['email']));
+				$where = array('U_LOGIN' => trim($post['email']));
 				$user = $this->common_model->selectData($this->common_model->cs_db,"users", '*', $where);
 				if (count($user) > 0) {
 
@@ -98,14 +98,14 @@ class Index extends CI_Controller {
 					$httpPrefix = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") ? "https://" : "http://";
 					$host=$httpPrefix.$_SERVER['HTTP_HOST'];
 					$data1=str_replace('{password}',$newpassword,$data1);
-					$data1=str_replace('{receiver}',$user[0]->fname . " ".$user[0]->lname,$data1);
-					$data1=str_replace('{username}',$user[0]->username,$data1);
+					$data1=str_replace('{receiver}',$user[0]->U_FNAME . " ".$user[0]->U_LNAME,$data1);
+					$data1=str_replace('{username}',$user[0]->U_LOGIN,$data1);
 					$data1=str_replace('{orgName}','Terabitz',$data1);
 					$data1=str_replace('{brokerName}','5 Min Propsite',$data1);
 					$data1=str_replace('{host}',$host,$data1);
 					
 
-					$ret=sendEmail($user[0]->email, "Forgot Password", $data1, FROM_EMAIL,FROM_NAME);
+					$ret=sendEmail($user[0]->U_LOGIN, "Forgot Password", $data1, FROM_EMAIL,FROM_NAME);
 
 
 					if ($ret) {
