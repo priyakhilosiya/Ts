@@ -3,7 +3,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header text-center">
-                <button type="button" class="close" data-dismiss="modal">×</button>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h3 class="modal-title">
                     <i class="ico-user"></i>
                     Invite Attendee</h3>
@@ -19,7 +19,7 @@
                                    <label for="ticket_id" class="control-label required">Ticket</label>
                                    <select class="form-control" id="ticket_id" name="ticket_id">
                                     <?php foreach($ticketDetails as $key=>$val){   ?>
-                                        <option value="<?=$val?>"><?php echo $val;?></option>
+                                        <option value="<?=$key?>"><?php echo $val;?></option>
                 					<?php }?>
                                   </select>
                                 </div>

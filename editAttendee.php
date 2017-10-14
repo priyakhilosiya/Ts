@@ -5,10 +5,10 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header text-center">
-                <button type="button" class="close" data-dismiss="modal">×</button>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h3 class="modal-title">
                     <i class="ico-edit"></i>
-                    Edit <b><?= $userAttendeeDetails['U_FNAME'];?><?=$userAttendeeDetails['U_LNAME'];?> <b></b></b></h3><b><b>
+                    Edit <b><?= $userAttendeeDetails['ATD_FNAME'];?> <?=$userAttendeeDetails['ATD_LNAME'];?> <b></b></b></h3><b><b>
             </b></b></div><b><b>
             <div class="modal-body">
                 <div class="row">
@@ -22,14 +22,14 @@
                                     <?php foreach($ticketDetails as $key=>$val){
                                        // echo $userAttendeeDetails['ORD_T_NAME'];
                                          $selected='';
-                                    if($userAttendeeDetails['ORD_T_NAME']==$val)  {
+                                    if($userAttendeeDetails['ORD_T_NAME']==$key)  {
                                      $selected='selected="selected"';
 
                                     } else{
                                         $selected='';
                                     }
                                       ?>
-                                        <option value="<?=$val?>" <?php echo $selected;?>><?php echo $val;?></option>
+                                        <option value="<?=$key?>" <?php echo $selected;?>><?php echo $val;?></option>
                 					<?php }?>
                                   </select>
                                 </div>

@@ -38,12 +38,39 @@ class Sponsor extends CI_Controller {
 		$html.=$this->load->view('admin/sponsor/editSponsor',$data,TRUE);
 	   echo $html;
 	}
-    public function cancelSponsor($order_id,$user_id)
+    public function cancelSponsor($user_id)
 	{
+		$userSponsorDetails=$this->common_model->getuserSponsorDetails($user_id);
+        $userSponsorDetails=$userSponsorDetails[0];
+        $data['user_id'] = $user_id;
+       // print_r($userSponsorDetails);
+        $data['userSponsorDetails'] = $userSponsorDetails;
 	    $html='';
-		$html.=$this->load->view('admin/sponsor/cancelSponsor','',TRUE);
-	   echo $html;
+		$html.=$this->load->view('admin/sponsor/cancelSponsor',$data,TRUE);
+	    echo $html;
 	}
+	public function deletesponsor(){
+		$post=$this->input->post();
+		$where=array('user_id'=>$post['user_id']);
+		$UpdateData = array(
+		'ORG_DELETED'=> '1'
+		);
+		$where=array('ORG_U_ID'=>$post['user_id']);
+		$updateId=$this->common_model->updateData($this->common_model->cs_db,'organization_sponsors',$UpdateData,$where);
+
+		$userArr = array(
+		'U_ACTIVE'=>0
+		);
+		$where=array('U_ID'=>$post['user_id'],'U_TYPE'=>'S');
+		$updateId=$this->common_model->updateData($this->common_model->cs_db,"users",$userArr,$where);
+		if($updateId > 0)
+		{
+			 echo json_encode( array('status' => 'success','message' => 'Sponsor Successfully Deleted.') ); exit;
+		}else{
+			echo json_encode( array('status' => 'error','messages' => 'something worng'));    exit;
+		}
+	}
+
     function postAddSponsor(){
 
             $post=$this->input->post();
@@ -162,7 +189,7 @@ class Sponsor extends CI_Controller {
 
 							$subject="Your ticket for the event Priya 's Interenational confirance";
 							$Data=array('useremail'=>$userInfo,'userInfo'=>$userInfo);
-							$emailTpl =$this->load->view('admin/users/sponsorEmail.php',$Data,true);
+							$emailTpl =$this->load->view('admin/sponsor/sponsorEmail.php',$Data,true);
 							$mailSent = sendEmail($toEmail,$subject,$emailTpl,'priya.khilosiya@kraffsoft.com','Priya Khilosiya');
 							if ($mailSent) {
 								$data["mailsentTouser"] = "1";
