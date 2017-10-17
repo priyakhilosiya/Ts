@@ -111,7 +111,7 @@ Attendees
                       <?php }?>
                       <?php }else{?>
 
-                      <tr><td>no recorrd</td></tr>
+                      <tr><td>no recorrd </td></tr>
 
                       <?php }?>
 

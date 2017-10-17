@@ -9,6 +9,7 @@ class Sponsor extends CI_Controller {
         date_default_timezone_set('Asia/Kolkata');
 		$this->load->helper(array('form'));
 		$this->load->library('form_validation');
+		$this->current_url = admin_path()."sponsor/"; 
 
 	}
 
@@ -18,6 +19,30 @@ class Sponsor extends CI_Controller {
 	   	$data['view'] = "index";
         $data['allSponsorDetails'] = $allSponsorDetails;
 		$this->load->view('admin/content', $data);
+	}
+	public function ajax_list($limit=0)
+	{
+		$post = $this->input->post();
+		$i = 0;
+		$columns = array(
+			array( 'db' => 'c.cat_name',  'dt' => $i++ ),
+			array( 'db' => 'c.cat_title',  'dt' => $i++ ),
+			array( 'db' => 'c.cat_theme',  'dt' => $i++ ),
+			array( 'db' => 'c.cat_id',
+					'dt' => $i++,
+					'formatter' => function( $d, $row ) {
+						$op = array();
+						if (hasAccess("category","details"))
+							$op[] = '<a href="category/edit/'.$d.'" onclick="editCategory('.$d.');">Edit</a>';
+							$op[] = '<a href="javascript:void(0);" onclick="deleteCategory('.$d.');">Delete</a>';
+						return implode(" | ",$op);
+					})
+			);
+		//echo "<pre>";print_r($columns);exit;
+		$join = array();
+		$where = array();
+	//	$where["u.role"] = "B";
+		echo json_encode( SSP::simple( $post, "faq_category c", "c.cat_id", $columns,$join,$where ) );exit;
 	}
 
 	 public function addSponsor()
@@ -61,11 +86,19 @@ class Sponsor extends CI_Controller {
 		$userArr = array(
 		'U_ACTIVE'=>0
 		);
-		$where=array('U_ID'=>$post['user_id'],'U_TYPE'=>'S');
+		$where=array('U_ID'=>$post['user_id'],'U_ROLE'=>'S');
 		$updateId=$this->common_model->updateData($this->common_model->cs_db,"users",$userArr,$where);
+
+		$userArr = array(
+		'U_ADDEDBY_ID'=>0
+		);
+		$where=array('U_ADDEDBY_ID'=>$post['user_id'],'U_ROLE'=>'C');
+		$updateId=$this->common_model->updateData($this->common_model->cs_db,"users",$userArr,$where);
+
 		if($updateId > 0)
 		{
-			 echo json_encode( array('status' => 'success','message' => 'Sponsor Successfully Deleted.') ); exit;
+
+			 echo json_encode( array('status' => 'success','message' => 'Sponsor Successfully Deleted.','redirectUrl'=>$this->current_url) ); exit;
 		}else{
 			echo json_encode( array('status' => 'error','messages' => 'something worng'));    exit;
 		}
@@ -146,7 +179,7 @@ class Sponsor extends CI_Controller {
 
 					if($updateId > 0)
 					{
-						 echo json_encode( array('status' => 'success','message' => 'Sponsor Successfully Updated.') );                         exit;
+						 echo json_encode( array('status' => 'success','message' => 'Sponsor Successfully Updated.','redirectUrl'=>$this->current_url) );                         exit;
 					}else{
                      echo json_encode( array('status' => 'error','messages' => 'something worng'));    exit;
 				    }
@@ -199,7 +232,7 @@ class Sponsor extends CI_Controller {
 					} */
 						/*sending mail to user and terabitz support*/
 
-                    echo json_encode( array('status' => 'success','message' => 'Sponsor Added Succesfully'));exit;
+                    echo json_encode( array('status' => 'success','message' => 'Sponsor Added Succesfully','redirectUrl'=>$this->current_url));exit;
 
                 }else{
                     echo json_encode( array('status' => 'error','messages' => 'something worng'));  exit;

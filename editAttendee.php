@@ -1,5 +1,5 @@
 <div role="dialog"  class="modal fade" tabindex="-1" role="dialog"  aria-hidden="true" id="EditAttendeeModal">
-   <form method="POST" action="<?= admin_path()?>users/postAddattendee" accept-charset="UTF-8" class="ajax closeModalAfter ">
+   <form method="POST" action="<?= admin_path()?>users/postAddattendee" accept-charset="UTF-8" class="ajax">
        <input type="hidden" name="order_id" id="order_id" value="<?=$order_id;?>" />
        <input type="hidden" name="user_id" id="user_id" value="<?=$user_id;?>" />
     <div class="modal-dialog">

@@ -15,6 +15,7 @@ class Users extends CI_Controller
             'form'
         ));
         $this->load->library('form_validation');
+		$this->current_url = admin_path()."users/";   
     }
     public function index()
     {
@@ -156,8 +157,7 @@ class Users extends CI_Controller
     }
     public function editAttendee($order_id, $user_id)
     {
-        //$ticketDetails=$this->common_model->getUserTicketDetails();
-        $ticketDetails               = TicketStructure();
+		 $ticketDetails               = TicketStructure();
         $data['ticketDetails']       = $ticketDetails;
         $userAttendeeDetails         = $this->common_model->getuserattendeeDetails($order_id, $user_id);
         $userAttendeeDetails         = $userAttendeeDetails[0];
@@ -254,25 +254,9 @@ class Users extends CI_Controller
                 $user_id     = $attendeeInfo[0]['U_ID'];
                 $order_id    = $attendeeInfo[0]['ORD_ID'];
                 $where       = "U_EMAIL = '" . $post['email'] . "' AND U_ROLE='C' AND U_ID!='" . $user_id . "'";
-                $usersdata   = $this->common_model->selectDataArr($this->common_model->cs_db, "users", '*', $where);
-                //print_r($usersdata);       exit();
-                //echo $this->common_model->last_query();exit;
-                /*if(count($usersdata)>0){
-                echo json_encode( array('status' => 'error','messages' => array('email'=>'Email address already exists')));    exit;
-                }*/
                 
                 //update data
                 $currGmtDate = date('Y-m-d H:i:s');
-                /*$attendeeUpdateData = array(
-                'U_FNAME'=>$post['first_name'],'U_LNAME'=>$post['last_name'],'U_EMAIL'=>$post['email'] ,'U_UPDATED'=> $currGmtDate
-                );
-                $attendeedetailsUpdateData = array(
-                'UD_FNAME'=>$post['first_name'],'UD_LNAME'=>$post['last_name']
-                );
-                $whereUpdate=array('U_ID'=>$user_id);
-                $updateId=$this->common_model->updateData($this->common_model->cs_db,'users',$attendeeUpdateData,$whereUpdate);
-                $whereDetailUpdate   =array('UD_UID'=>$user_id);
-                $updateId=$this->common_model->updateData($this->common_model->cs_db,'users_details',$attendeedetailsUpdateData,$whereDetailUpdate);*/
                 
                 $orderUpdateData = array(
                     'ORD_UPDATED' => $currGmtDate
@@ -308,10 +292,10 @@ class Users extends CI_Controller
                 $updateId      = $this->common_model->updateData($this->common_model->cs_db, 'attendees', $attUpdateData, $whereatt);
                 
                 if ($updateId > 0) {
-                    
-                    echo json_encode(array(
+					 echo json_encode(array(
                         'status' => 'success',
-                        'message' => 'Successfully Updated Attendee'
+                        'message' => 'Successfully Updated Attendee',
+						'redirectUrl'=>$this->current_url
                     ));
                     exit;
                 } else {
@@ -426,11 +410,18 @@ class Users extends CI_Controller
                             $data['mailsentTouser'] = "0";
                         }
                     }
-                    /*sending mail to user and terabitz support*/
+
+					/*$middleContentHtml="This is testing Priya This is testing Priya This is testing Priya This is testing Priya";
+					$this->load->library('wkpdfhtml');
+					$pdf = new Wkpdfhtml();
+					$pdf->add_html($middleContentHtml);
+					$Ticketpdf=$pdf->renderPdf('1','1');*/
+					/*sending mail to user and terabitz support*/
                     
                     echo json_encode(array(
                         'status' => 'success',
-                        'message' => 'Attenddes Added Succesfully'
+                        'message' => 'Attenddes Added Succesfully',
+						'redirectUrl'=>$this->current_url
                     ));
                     exit;
                     
@@ -592,7 +583,8 @@ class Users extends CI_Controller
 			if(!isset($post['notify_attendee']) && $updateId> 0){
 				echo json_encode(array(
 								'status' => 'success',
-								'message' => 'Attendee cancel  Succesfully'
+								'message' => 'Attendee cancel  Succesfully',
+								'redirectUrl'=>$this->current_url
 							));
 							exit;
 			}
@@ -610,7 +602,8 @@ class Users extends CI_Controller
 					if ($mailSent) {
 						echo json_encode(array(
 								'status' => 'success',
-								'message' => 'Attendee cancel  Succesfully'
+								'message' => 'Attendee cancel  Succesfully',
+								'redirectUrl'=>$this->current_url
 							));
 							exit;
 					} else {
